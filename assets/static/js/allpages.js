@@ -60,3 +60,7 @@ function SwitchService(servicename) {
         }
     });
 }
+
+function closeWindowFunction() {
+  return "Do you wan't to close the window ?";
+}

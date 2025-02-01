@@ -40,6 +40,7 @@ $events = $logfunc->getRivendellEvents($_COOKIE['serviceName']);
 $id = $_GET['log'];
 $lockguid = $functions->locklog($id);
 $pagecode = "logs";
+$closwarnpage = 1;
 if ($lockguid != "") {
     if (isset($logedit_data[$id]) && $logedit_data[$id]['LOCK_GUID'] != $lockguid) {
         unset($logedit_data[$id]);
