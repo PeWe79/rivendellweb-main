@@ -494,7 +494,7 @@ class Log
         $stmt->bindParam(':preposition', $cue);
         $stmt->bindParam(':timetype', $hardtime);
         $stmt->bindParam(':gracetime', $hardtype);
-        $stmt->bindParam(':firsttrans', $hardtime);
+        $stmt->bindParam(':firsttrans', $firsttrans);
         $stmt->bindParam(':defaulttrans', $defaulttans);
         $stmt->bindParam(':autofill', $autofill);
         $stmt->bindParam(':autofillslop', $autofillunder);
