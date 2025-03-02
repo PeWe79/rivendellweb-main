@@ -48,6 +48,9 @@ Base language is **English**
 Translated to:
 * Swedish by Andreas Olsson
 
+## Discord
+Join the [Discord](https://discord.gg/ztMfMPngC5) channel to help me with ideas and give feedback about the system.
+
 ## Special thanks to
 [Saugi](https://github.com/zuramai/mazer) the creator for Mazer bootstrap theme.
 
