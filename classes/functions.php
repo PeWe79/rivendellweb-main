@@ -116,6 +116,41 @@ class Functions
 
     }
 
+    public function getDurationForCalc($millis)
+    {
+
+        //minutes
+        $mins = 0;
+
+        if ($millis >= 60000)
+            $mins = (int) ($millis / 60000);
+
+        while (strlen($mins) < 2)
+            $mins = '0' . $mins;
+
+        $millis = $millis - ($mins * 60000);
+
+        //seconds
+        $secs = 0;
+
+        if ($millis >= 1000)
+            $secs = (int) ($millis / 1000);
+
+        while (strlen($secs) < 2)
+            $secs = '0' . $secs;
+
+        $millis = $millis - ($secs * 1000);
+
+
+        $time = $mins . '.' . $secs;
+
+        if ($millis > 0)
+            $time .= '.' . (int) ($millis / 100);
+
+        return $time;
+
+    }
+
     public function curl_custom_postfields($ch, array $assoc = array(), array $files = array())
     {
 

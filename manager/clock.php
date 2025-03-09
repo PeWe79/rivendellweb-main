@@ -60,6 +60,7 @@ $plugin_js = '<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js
 <script src="'.DIR.'/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script src="https://unpkg.com/huebee@2/dist/huebee.pkgd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
 
 <script src="'.DIR.'/assets/extensions/jqueryvalidation/jquery.validate.min.js"></script>
 <script src="'.DIR.'/assets/extensions/jqueryvalidation/additional-methods.min.js"></script>
@@ -102,14 +103,23 @@ $page_js = '<script src="'.DIR.'/assets/static/js/clock.js"></script>';
                     </div>
                 </div>
                 <section class="section">
-                    <div class="card">
+                <div class="row">
+                <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title"><?php echo $info->getClockInfo($clockid, 'NAME'); ?></h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">     
+            <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <h5 class="card-title">
-                                <?php echo $info->getClockInfo($clockid, 'NAME'); ?>
+                            <?= $ml->tr('CLCODE {{'.$info->getClockInfo($clockid, 'SHORT_NAME').'}}') ?>
                             </h5>
-                            <h6 class="card-subtitle">
-                                <?= $ml->tr('CLCODE {{'.$info->getClockInfo($clockid, 'SHORT_NAME').'}}') ?>
-                            </h6>
                             <div class="d-flex justify-content-end align-items-center d-none"
                                 data-kt-clocks-table-select="selected">
                                 <div class="fw-bold me-5">
@@ -197,7 +207,8 @@ $page_js = '<script src="'.DIR.'/assets/static/js/clock.js"></script>';
                             </div>
                         </div>
                     </div>
-
+                    </div>   
+                    </div>
                 </section>
                 <div class="modal fade text-left" id="saveas_clock" data-bs-backdrop="static" role="dialog"
                     aria-labelledby="ClockSaveLabel" aria-hidden="true">

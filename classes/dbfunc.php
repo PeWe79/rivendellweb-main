@@ -277,6 +277,26 @@ class DBFunc
 
     }
 
+    public function getClockLinesData($clock)
+    {
+
+        $clocks = array();
+        $sql = 'SELECT * FROM `EVENTS` ev LEFT JOIN `CLOCK_LINES` clk ON ev.NAME=clk.EVENT_NAME WHERE clk.CLOCK_NAME = :clockname ORDER BY clk.START_TIME ASC';
+
+        $stmt = $this->_db->prepare($sql);
+        $stmt->bindParam(':clockname', $clock);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        while ($row = $stmt->fetch()) {
+
+            $clocks[] = $row;
+        }
+
+        return $clocks;
+
+    }
+
     public function getSchedRulesData($code, $clock)
     {
 

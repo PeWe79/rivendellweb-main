@@ -33,6 +33,7 @@ var evname;
 var evid;
 var doedit = 0;
 var editmodal;
+var chart;
 
 Inputmask({
     "mask": "99:99.9"
@@ -134,6 +135,35 @@ if (elements && elements.length > 0) {
             }
         });
     });
+}
+
+function updateClock(clock) {
+    $.getJSON(HOST_URL + '/forms/clock/getclockvalues.php?clock='+clock, function(data) {
+
+        var ctx = document.getElementById('chart').getContext('2d');
+   chart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: 'Dataset',
+        data: data.values,
+        backgroundColor: data.color,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      plugins: {
+        tooltip: {
+          enabled: false, // Disable tooltips
+        },
+        legend: {
+            display: false
+          }
+      }
+    }
+  });
+});
 }
 
 function editshed(code, clock) {
@@ -290,6 +320,8 @@ function deleteevent(eventid) {
                     var kod = mydata.errorcode;
                     if (fel == "false") {
                         dt.ajax.reload();
+                        chart.destroy();
+                        updateClock(CLOCK_ID);
                     } else {
                         Swal.fire({
                             text: TRAN_BUG,
@@ -663,6 +695,9 @@ $('#addevent_form').validate({
                     $("#endtime").val("");
                     $("#addevent_form").trigger("reset");
                     $('#addevent_clock').modal('hide');
+
+                    chart.destroy();
+                    updateClock(CLOCK_ID);
                 } else {
                     Swal.fire({
                         text: TRAN_BUG,
@@ -1101,3 +1136,4 @@ var KTDatatablesServerSide = function () {
 }();
 
 KTDatatablesServerSide.init();
+updateClock(CLOCK_ID);
