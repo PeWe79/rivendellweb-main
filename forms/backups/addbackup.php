@@ -49,7 +49,7 @@ if ($_POST['forbackup'] == 0) {
         //exec("mysqldump --user={$user} --password={$password} --host={$host} {$database} --result-file={$dir} 2>&1", $output);
         exec($cmd);
         $zip = new ZipArchive();
-        $zip_name = $backupfolder . 'backup-' . $fileNameZip;
+        $zip_name = $backupfolder . '' . $fileNameZip;
         if ($zip->open($zip_name, ZipArchive::CREATE) !== TRUE) {
             $echodata = ['error' => 'true', 'errorcode' => '1'];
             echo json_encode($echodata);
@@ -81,7 +81,7 @@ if ($_POST['forbackup'] == 0) {
      ***********************************/
     try {
         $zip = new ZipArchive();
-        $zip_name = $backupfolder . 'backup-' . $filenamerivsys;
+        $zip_name = $backupfolder . '' . $filenamerivsys;
         if ($zip->open($zip_name, ZipArchive::CREATE) !== TRUE) {
             $echodata = ['error' => 'true', 'errorcode' => '1'];
             echo json_encode($echodata);
@@ -118,7 +118,7 @@ if ($_POST['forbackup'] == 0) {
         //exec("mysqldump --user={$user} --password={$password} --host={$host} {$database} --result-file={$dir} 2>&1", $output);
         exec($cmd);
         $zip = new ZipArchive();
-        $zip_name = $backupfolder . 'backup-' . $fileNameZip;
+        $zip_name = $backupfolder . '' . $fileNameZip;
         if ($zip->open($zip_name, ZipArchive::CREATE) !== TRUE) {
             $echodata = ['error' => 'true', 'errorcode' => '1'];
             echo json_encode($echodata);

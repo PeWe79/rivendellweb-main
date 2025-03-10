@@ -67,7 +67,7 @@ for (let i = 0; i < choices.length; i++) {
 
 function downloadBackup(bfile) {
 
-    window.open(HOST_URL + '/data/backups/backup-'+bfile, '_blank');
+    window.open(HOST_URL + '/data/backups/'+bfile, '_blank');
 }
 
 function removeBackup(bfile) {

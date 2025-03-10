@@ -42,19 +42,40 @@ $dir2 = LOCAL_PATH_ROOT . '/data/settings.json';
 $dir3 = LOCAL_PATH_ROOT . '/data/grids.json';
 $created = date("Y-m-d H:i:s");
 $error = 0;
+$sevenDaysAgo = strtotime('-7 days');
+$oneMonthAgo = strtotime('-1 month');
+$folderPath = LOCAL_PATH_ROOT . "/data/backups";
+if ($handle = opendir($folderPath)) {
+    while (($file = readdir($handle)) !== false) {
+        // Skip the current and parent directories
+        if ($file == '.' || $file == '..') {
+            continue;
+        }
 
-$files = glob(dirname(__FILE__) . $backupFolder . '*');
-foreach ($files as $file) {
-    if ($olderthan == 0) {
-        if (is_file($file) && time() - filemtime($file) >= 60 * 60 * 24 * 7)
-        unlink($file);
-    } else if ($olderthan == 1) {
-        if (is_file($file) && time() - filemtime($file) >= 30 * 24 * 60 * 60)
-        unlink($file);
+        // Get the file path and modification time
+        $filePath = $folderPath . '/' . $file;
+        $fileTime = filemtime($filePath);
+
+        if ($olderthan == 0) {
+            if ($fileTime < $sevenDaysAgo) {
+                // Remove the file
+                unlink($filePath);
+                unset($json_sett["backups"]['backdata'][$file]);
+                $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+                file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings);
+            }
+        } else if ($olderthan == 1) {
+            if ($fileTime < $oneMonthAgo) {
+                // Remove the file
+                unlink($filePath);
+                unset($json_sett["backups"]['backdata'][$file]);
+                $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+                file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings);
+            }
+        }
     }
-    
+    closedir($handle);
 }
-
 if ($backuptype == 0) {
     /******************************
      * DO ONLY RIVENDELL DATABASE *
@@ -62,7 +83,7 @@ if ($backuptype == 0) {
     $cmd = "mysqldump -h {$host} -u {$user} --password={$password} {$database} > {$backupfolder}{$fileName}";
     exec($cmd);
     $zip = new ZipArchive();
-    $zip_name = $backupfolder . 'backup-' . $fileNameZip;
+    $zip_name = $backupfolder . '' . $fileNameZip;
     if ($zip->open($zip_name, ZipArchive::CREATE) !== TRUE) {
         $error = 1;
     }
@@ -81,7 +102,7 @@ if ($backuptype == 0) {
      * DO ONLY RIVENDELL WEB BROADCAST *
      ***********************************/
     $zip = new ZipArchive();
-    $zip_name = $backupfolder . 'backup-' . $filenamerivsys;
+    $zip_name = $backupfolder . '' . $filenamerivsys;
     if ($zip->open($zip_name, ZipArchive::CREATE) !== TRUE) {
         $error = 1;
     }
@@ -104,7 +125,7 @@ if ($backuptype == 0) {
     $cmd = "mysqldump -h {$host} -u {$user} --password={$password} {$database} > {$backupfolder}{$fileName}";
     exec($cmd);
     $zip = new ZipArchive();
-    $zip_name = $backupfolder . 'backup-' . $fileNameZip;
+    $zip_name = $backupfolder . '' . $fileNameZip;
     if ($zip->open($zip_name, ZipArchive::CREATE) !== TRUE) {
         $error = 1;
     }

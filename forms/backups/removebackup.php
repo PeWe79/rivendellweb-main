@@ -30,7 +30,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 
 $id = $_POST['idet'];
 $backupfolder = LOCAL_PATH_ROOT . "/data/backups/";
-$filename = "backup-" . $id;
+$filename = $id;
 $thefile = $backupfolder . $filename;
 unlink($thefile);
 unset($json_sett["backups"]['backdata'][$id]);
