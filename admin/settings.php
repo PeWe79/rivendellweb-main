@@ -274,6 +274,29 @@ $page_js = '<script src="'.DIR.'/assets/static/js/settings.js"></script>';
                                         </p>
                                     </div>
                                     <div class="col-md-4">
+                                        <label for="loggenerator">
+                                            <?= $ml->tr('USELOGGENERATOR'); ?>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        <select id="loggenerator" name="loggenerator" class="choices form-select">
+                                            <option value="1" <?php if ($json_sett["loggenerator"] == '1') {
+                                                echo 'SELECTED';
+                                            } ?>>
+                                                <?= $ml->tr('YES'); ?>
+                                            </option>
+                                            <option value="0" <?php if ($json_sett["loggenerator"] == '0') {
+                                                echo 'SELECTED';
+                                            } ?>>
+                                                <?= $ml->tr('NO'); ?>
+                                            </option>
+                                        </select>
+                                        <p><small class="text-muted">
+                                                <?= $ml->tr('USELOGGENERATORENABLE'); ?>
+                                            </small>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4">
                                         <label for="multitrack">
                                             <?= $ml->tr('USEMULTITRACKEDITOR'); ?>
                                         </label>

@@ -242,7 +242,16 @@ if (isset($_COOKIE['serviceName'])) {
                         </span>
                     </a>
                 </li>
-                <?php } ?>
+                <?php if ($json_sett["loggenerator"] == 1) { ?>
+                <li class="sidebar-item <?php if ($pagecode == 'generatelog') { ?>active<?php } ?>">
+                    <a href="<?php echo DIR; ?>/manager/generatelog" class='sidebar-link'>
+                        <i class="bi bi-list-columns-reverse"></i>
+                        <span>
+                            <?= $ml->tr('GENERATELOG'); ?>
+                        </span>
+                    </a>
+                </li>                
+                <?php } } ?>
                 <?php if (isset($json_sett["admin"][$_COOKIE['username']]["username"])) { ?>
                     <li class="sidebar-item <?php if ($pagecode == 'admindash' || $pagecode == 'settings' || $pagecode == 'users' || $pagecode == 'rdairplay' || $pagecode == 'rdpanel' || $pagecode == 'rdlogedit' || $pagecode == 'groups'|| $pagecode == 'schedcodes' || $pagecode == 'hosts' || $pagecode == 'services' || $pagecode == 'backups') { ?>active<?php } ?> has-sub">
                         <a href="#" class='sidebar-link'>

@@ -67,6 +67,23 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/grids.json')) {
   $json_string = file_get_contents($filepath);
   $grids_data = json_decode($json_string, true);
 }
+/*****************************
+ * FOR HANDLE LOG GENERATION *
+ *****************************/
+if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json')) {
+  $loggen_data = array();
+} else {
+  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json';
+  $json_string = file_get_contents($filepath);
+  $loggen_data = json_decode($json_string, true);
+}
+if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_log.json')) {
+  $loggenlog_data = array();
+} else {
+  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/loggen_log.json';
+  $json_string = file_get_contents($filepath);
+  $loggenlog_data = json_decode($json_string, true);
+}
 ob_start();
 session_start();
 date_default_timezone_set($json_sett['timezone']);
@@ -82,6 +99,7 @@ define('DEFAULTLANG', $json_sett['deflang']);
 define('VERS', '0.6.0'); //DO NOT CHANGE THIS!
 define('DBOK', '375'); //DO NOT CHANGE THIS!
 define('SYSTIT', 'Rivendell Web Broadcast'); //DO NOT CHANGE THIS!
+define('APIURL', 'http://localhost/rd-bin/rdxport.cgi'); //DO NOT CHANGE THIS!
 define('USERESET', $json_sett['usereset']);
 define('AUTOTRIM', $json_sett['autotrim']);
 define('NORMALIZE', $json_sett['normalize']);
@@ -124,12 +142,14 @@ include LOCAL_PATH_ROOT . '/classes/functions.php';
 include LOCAL_PATH_ROOT . '/classes/getinfo.php';
 include LOCAL_PATH_ROOT . '/classes/user.php';
 include LOCAL_PATH_ROOT . '/classes/logmanager.php';
+include LOCAL_PATH_ROOT . '/classes/loggenerator.php';
 include LOCAL_PATH_ROOT . '/classes/multilang.php';
 $dbfunc = new DBFunc($db);
 $functions = new Functions($db);
 $info = new Getinfo($db);
 $user = new User($db);
 $logfunc = new Log($db);
+$loggen = new LogGenerator($db);
 /**********************************************************************************
  * WE NEED TO CHECK SO THERE ARE NO LOGS THAT ARE LEFT IN THE LOG EDIT JSON FILE. *
  *             IF THERE ARE LOGS THAT NOT ARE IN USE, THEN REMOVE IT.             *

@@ -27,32 +27,24 @@
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
 require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
+$logname = $_POST['log'];
 
-$json_sett["sysname"] = $_POST['sys_name'];
-$json_sett["sysurl"] = $_POST['urladd'];
-$json_sett["timezone"] = $_POST['time_zone'];
-$json_sett["deflang"] = $_POST['def_lang'];
-$json_sett["usereset"] = $_POST['pass_reset'];
-$json_sett["autotrim"] = $_POST['autotrim'];
-$json_sett["normalize"] = $_POST['normalize'];
-$json_sett["smtpserv"] = $_POST['smtp_server'];
-$json_sett["smtplogin"] = $_POST['smtp_login'];
-$json_sett["smtpenc"] = $_POST['smtp_enc'];
-$json_sett["port"] = $_POST['smtp_port'];
-$json_sett["smtpusr"] = $_POST['smtp_usr'];
-$json_sett["smtppass"] = $_POST['smtp_pass'];
-$json_sett["smtpfrom"] = $_POST['smtp_from'];
-$json_sett["multitrack"] = $_POST['multitrack'];
-$json_sett["backups"]["autotype"] = $_POST['back_type'];
-$json_sett["backups"]["olderthan"] = $_POST['back_older'];
-$json_sett["loggenerator"] = $_POST['loggenerator'];
+$loggen_data['logs'][$logname]['GENERATELOG'] = 1;
 
-$jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+unset($loggenlog_data[$logname]);
 
-if (file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
-    $echodata = ['error' => 'false', 'errorcode' => '0'];
-    echo json_encode($echodata);
-} else {
+$jsonData = json_encode($loggen_data, JSON_PRETTY_PRINT);
+if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json', $jsonData)) {
     $echodata = ['error' => 'true', 'errorcode' => '1'];
     echo json_encode($echodata);
+} else {
+    $jsonData = json_encode($loggenlog_data, JSON_PRETTY_PRINT);
+    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_log.json', $jsonData)) {
+        $echodata = ['error' => 'true', 'errorcode' => '1'];
+        echo json_encode($echodata);
+    } else {
+        $echodata = ['error' => 'false', 'errorcode' => '0'];
+        echo json_encode($echodata);
+    }
 }
+

@@ -9,6 +9,9 @@ The goal with this is to be able to do the most things from this system.
 
 **Please be advice that this system use BOTH Rivendells API and also do direct changes in the database**
 
+## Log generator
+There is an Log generator for testing only as it under heavy development. Do not run it on a live production server yet. There are not yet possible to use external scheduler. Needs to be enable in the settings, also you need to setup crontab: * * * * * curl -s http://localhost/api/generator.php > /dev/null
+
 ## Multitrack Editor
 There is an multitrack editor in voicetracking for testing. Not recommended to use it on live production server yet. This need to be activated in system settings. Read documents for more info.
 
