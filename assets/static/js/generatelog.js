@@ -628,6 +628,8 @@ $("#date").flatpickr({
     enableTime: false,
     minDate: "today",
     dateFormat: "Y-m-d",
+    mode: "multiple",
+    conjunction: ",",
     locale: {
         firstDayOfWeek: 1,
         weekAbbreviation: "v",

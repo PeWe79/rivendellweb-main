@@ -30,23 +30,51 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 
 $date = $_POST['date'];
 $service = $_POST['service'];
-$splitdate = explode('-', $date);
-$month = $splitdate[1];
-$day   = $splitdate[2];
-$year  = $splitdate[0];
+if (strpos($date, ',') !== false) {
+    $multdates = explode(',', $date);
+    foreach ($multdates as $mdates) {
 
-$tempname = $loggen->getLogNameFromService($service);
-$tempname = str_replace('%m', $month, $tempname);
-$tempname = str_replace('%d', $day, $tempname);
-$tempname = str_replace('%Y', $year, $tempname);
+        $splitdate = explode('-', $mdates);
+        $month = $splitdate[1];
+        $day = $splitdate[2];
+        $year = $splitdate[0];
 
-if ($loggen->checkLogExist($tempname, $service)) {
-    $echodata = ['error' => 'true', 'errorcode' => '1'];
-    echo json_encode($echodata);
-    exit();
-} else {
+        $tempname = $loggen->getLogNameFromService($service);
+        $tempname = str_replace('%m', $month, $tempname);
+        $tempname = str_replace('%d', $day, $tempname);
+        $tempname = str_replace('%Y', $year, $tempname);
+
+        if ($loggen->checkLogExist($tempname, $service)) {
+            $echodata = ['error' => 'true', 'errorcode' => '1'];
+            echo json_encode($echodata);
+            exit();
+        }
+
+    }
     $echodata = ['error' => 'false', 'errorcode' => '0'];
     echo json_encode($echodata);
     exit();
+} else {
+
+    $splitdate = explode('-', $date);
+    $month = $splitdate[1];
+    $day = $splitdate[2];
+    $year = $splitdate[0];
+
+    $tempname = $loggen->getLogNameFromService($service);
+    $tempname = str_replace('%m', $month, $tempname);
+    $tempname = str_replace('%d', $day, $tempname);
+    $tempname = str_replace('%Y', $year, $tempname);
+
+    if ($loggen->checkLogExist($tempname, $service)) {
+        $echodata = ['error' => 'true', 'errorcode' => '1'];
+        echo json_encode($echodata);
+        exit();
+    } else {
+        $echodata = ['error' => 'false', 'errorcode' => '0'];
+        echo json_encode($echodata);
+        exit();
+    }
+
 }
 
