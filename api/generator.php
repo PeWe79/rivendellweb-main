@@ -39,6 +39,18 @@ if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json')) {
     if ($loggen_data['sys']['GENERATING'] == 0) {
 
         foreach ($loggen_data['logs'] as $lines) {
+            if (date("Y-m-d") == $lines['PURGELOG']) {
+                unset($loggen_data['logs'][$lines['LOGNAME']]);
+                unset($loggenlog_data[$lines['LOGNAME']]);
+                $jsonData = json_encode($loggen_data, JSON_PRETTY_PRINT);
+                if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json', $jsonData)) {
+                    $loggen->addToLog("Could not purge log template.", $lines['LOGNAME']);
+                }
+                $jsonData = json_encode($loggenlog_data, JSON_PRETTY_PRINT);
+                if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_log.json', $jsonData)) {
+                    $loggen->addToLog("Could not purge log template.", $lines['LOGNAME']);
+                }
+            }
             if ($lines['GENERATELOG'] == 1) {
                 //Start make the log here
                 $loggen_data['sys']['GENERATING'] = 1;
