@@ -27,40 +27,50 @@
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
 require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
-$username = $_POST['username'];
-$fullname = $_POST['fullname'];
-$email = $_POST['email'];
-$phone = $_POST['phone'];
-$twofactor = $_POST['twofactor'];
+$username = $_COOKIE['twofactusr'];
+$code = $_POST['code'];
 
-if (!$twofactor == 1) {
-    $twofactor = 0;
-}
-
-if ($twofactor == 1) {
-    $json_sett['usrsett'][$username]["twofactor"]["enable"] = 1;
-    $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
-    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
-        $echodata = ['error' => 'true', 'errorcode' => '1'];
-        echo json_encode($echodata);
-        exit();
-    }
-} else {
-    $json_sett['usrsett'][$username]["twofactor"]["enable"] = 0;
-    $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
-    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
-        $echodata = ['error' => 'true', 'errorcode' => '1'];
-        echo json_encode($echodata);
-        exit();
-    }
-}
-
-if (!$user->updateUserData($username, $fullname, $email, $phone)) {
+if (!isset($_COOKIE['twofactusr'])) {
     $echodata = ['error' => 'true', 'errorcode' => '1'];
     echo json_encode($echodata);
+    exit();
 } else {
-    $_COOKIE['fullname'] = $fullname;
-    $echodata = ['error' => 'false', 'errorcode' => '0'];
-    echo json_encode($echodata);
+    if ($json_sett['usrsett'][$username]["twofactor"]["enable"] == 1) {
+        if (isset($json_sett['usrsett'][$username]["twofactor"]["expire"])) {
+            $datetime = $json_sett['usrsett'][$username]["twofactor"]["expire"];
+            $now = date('Y-m-d H:i:s');
+            if (strtotime($datetime) < strtotime($now)) {
+                $echodata = ['error' => 'true', 'errorcode' => '1'];
+                echo json_encode($echodata);
+                exit();
+            } else {
+                $rd_password = $functions->loadPass($username);
+                $remember = $json_sett['usrsett'][$username]["twofactor"]["remember"];
+                $rightcode = $json_sett['usrsett'][$username]["twofactor"]["code"];
+                if ($code == $rightcode) {
+                    if ($user->isValidUsername($username)) {
+                        if ($user->logintwo($username, $rd_password, $remember)) {
+                            $echodata = ['error' => 'false', 'errorcode' => '0'];
+                            echo json_encode($echodata);
+                        } else {
+                            $echodata = ['error' => 'true', 'errorcode' => '1'];
+                            echo json_encode($echodata);
+                        }
+                    } else {
+                        $echodata = ['error' => 'true', 'errorcode' => '1'];
+                        echo json_encode($echodata);
+                    }
+                } else {
+                    $echodata = ['error' => 'true', 'errorcode' => '1'];
+                    echo json_encode($echodata);
+                }
+
+            }
+        }
+
+    } else {
+        $echodata = ['error' => 'true', 'errorcode' => '1'];
+        echo json_encode($echodata);
+    }
 }
 

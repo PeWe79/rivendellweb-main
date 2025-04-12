@@ -1,6 +1,7 @@
 RewriteEngine On
 RewriteRule ^login$ index.php
 RewriteRule ^forgot$ forgot.php
+RewriteRule ^twofactor$ twofactor.php
 RewriteRule ^dash$ dash.php
 RewriteRule ^updater$ updater.php
 RewriteRule ^rdcatch$ rdcatch.php

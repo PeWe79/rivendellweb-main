@@ -28,7 +28,7 @@
  *********************************************************************************************************/
 require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 if (!$user->is_logged_in()) {
-    header('Location: '.DIR.'/login');
+    header('Location: ' . DIR . '/login');
     exit();
 }
 
@@ -38,94 +38,107 @@ $fullname = $_COOKIE['fullname'];
 $pagecode = "usersett";
 $page_vars = 'usrsett';
 $page_title = $ml->tr('ACCINFO');
-$page_css = '<link rel="stylesheet" href="'.DIR.'/assets/extensions/sweetalert2/sweetalert2.min.css">';
-$plugin_js = '<script src="'.DIR.'/assets/extensions/jqueryvalidation/jquery.validate.min.js"></script>
-<script src="'.DIR.'/assets/extensions/jqueryvalidation/additional-methods.min.js"></script>
-<script src="'.DIR.'/assets/extensions/sweetalert2/sweetalert2.min.js"></script>';
-$page_js = '<script src="'.DIR.'/assets/static/js/usrsett.js"></script>';
+$page_css = '<link rel="stylesheet" href="' . DIR . '/assets/extensions/sweetalert2/sweetalert2.min.css">';
+$plugin_js = '<script src="' . DIR . '/assets/extensions/jqueryvalidation/jquery.validate.min.js"></script>
+<script src="' . DIR . '/assets/extensions/jqueryvalidation/additional-methods.min.js"></script>
+<script src="' . DIR . '/assets/extensions/sweetalert2/sweetalert2.min.js"></script>';
+$page_js = '<script src="' . DIR . '/assets/static/js/usrsett.js"></script>';
 ?>
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/top.php'; ?>
 
-            <div class="page-heading">
-                <div class="page-title">
-                    <div class="row">
-                        <div class="col-12 col-md-6 order-md-1 order-last">
-                            <h3><?= $ml->tr('ACCINFO'); ?></h3>
-                            <p class="text-subtitle text-muted"><?= $ml->tr('UPDATEACCOUNTINFO'); ?></p>
-                        </div>
-                        <div class="col-12 col-md-6 order-md-2 order-first">
-                            <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="<?php echo DIR; ?>/dash"><?= $ml->tr('DASHBOARD'); ?></a></li>
-                                    <li class="breadcrumb-item active" aria-current="page"><?= $ml->tr('ACCINFO'); ?></li>
-                                </ol>
-                            </nav>
-                        </div>
+<div class="page-heading">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3><?= $ml->tr('ACCINFO'); ?></h3>
+                <p class="text-subtitle text-muted"><?= $ml->tr('UPDATEACCOUNTINFO'); ?></p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="<?php echo DIR; ?>/dash"><?= $ml->tr('DASHBOARD'); ?></a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page"><?= $ml->tr('ACCINFO'); ?></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title"><?= $ml->tr('CHANGEPASS'); ?></h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="#" id="pass_form" method="get">
+                            <div class="form-group my-2">
+                                <label for="current_password" class="form-label"><?= $ml->tr('CURRENTPASS'); ?></label>
+                                <input type="password" name="current_password" id="current_password"
+                                    class="form-control" value="">
+                            </div>
+                            <div class="form-group my-2">
+                                <label for="password" class="form-label"><?= $ml->tr('NEWPASS'); ?></label>
+                                <input type="password" name="password" id="password" class="form-control" value="">
+                            </div>
+                            <div class="form-group my-2">
+                                <label for="confirm_password" class="form-label"><?= $ml->tr('CONFPASS'); ?></label>
+                                <input type="password" name="confirm_password" id="confirm_password"
+                                    class="form-control" value="">
+                            </div>
+
+                            <div class="form-group my-2 d-flex justify-content-end">
+                                <input type="hidden" name="username" value="<?php echo $username; ?>">
+                                <button type="submit" class="btn btn-danger"><?= $ml->tr('CHANGEPASS'); ?></button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <section class="section">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title"><?= $ml->tr('CHANGEPASS'); ?></h5>
-                                </div>
-                                <div class="card-body">
-                                    <form action="#" id="pass_form" method="get">
-                                        <div class="form-group my-2">
-                                            <label for="current_password" class="form-label"><?= $ml->tr('CURRENTPASS'); ?></label>
-                                            <input type="password" name="current_password" id="current_password"
-                                                class="form-control" value="">
-                                        </div>
-                                        <div class="form-group my-2">
-                                            <label for="password" class="form-label"><?= $ml->tr('NEWPASS'); ?></label>
-                                            <input type="password" name="password" id="password" class="form-control" value="">
-                                        </div>
-                                        <div class="form-group my-2">
-                                            <label for="confirm_password" class="form-label"><?= $ml->tr('CONFPASS'); ?></label>
-                                            <input type="password" name="confirm_password" id="confirm_password"
-                                                class="form-control" value="">
-                                        </div>
-
-                                        <div class="form-group my-2 d-flex justify-content-end">
-                                            <input type="hidden" name="username" value="<?php echo $username;?>">
-                                            <button type="submit" class="btn btn-danger"><?= $ml->tr('CHANGEPASS'); ?></button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title"><?= $ml->tr('USERINFORMATION'); ?></h5>
-                                </div>
-                                <div class="card-body">
-                                    <form action="#" id="user_form" method="get">
-                                        <div class="form-group my-2">
-                                            <label for="fullname" class="form-label"><?= $ml->tr('FULLNAME'); ?></label>
-                                            <input type="text" name="fullname" id="fullname" class="form-control" value="<?php echo $info->getUserFullName($username) ?>">
-                                        </div>
-                                        <div class="form-group my-2">
-                                            <label for="email" class="form-label"><?= $ml->tr('EMAIL'); ?></label>
-                                            <input type="email" name="email" id="email" class="form-control" value="<?php echo $info->getUserEmail($username) ?>">
-                                        </div>
-                                        <div class="form-group my-2">
-                                            <label for="phone" class="form-label"><?= $ml->tr('PHONE'); ?></label>
-                                            <input type="text" name="phone" id="phone" class="form-control" value="<?php echo $info->getUserPhoneNumber($username) ?>">
-                                        </div>
-
-                                        <div class="form-group my-2 d-flex justify-content-end">
-                                        <input type="hidden" name="username" value="<?php echo $username;?>">
-                                            <button type="submit" class="btn btn-primary"><?= $ml->tr('SAVE'); ?></button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>                        
-                    </div>
-                </section>
             </div>
 
-            <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/bottom.php'; ?>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title"><?= $ml->tr('USERINFORMATION'); ?></h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="#" id="user_form" method="get">
+                            <div class="form-group my-2">
+                                <label for="fullname" class="form-label"><?= $ml->tr('FULLNAME'); ?></label>
+                                <input type="text" name="fullname" id="fullname" class="form-control"
+                                    value="<?php echo $info->getUserFullName($username) ?>">
+                            </div>
+                            <div class="form-group my-2">
+                                <label for="email" class="form-label"><?= $ml->tr('EMAIL'); ?></label>
+                                <input type="email" name="email" id="email" class="form-control"
+                                    value="<?php echo $info->getUserEmail($username) ?>">
+                            </div>
+                            <div class="form-group my-2">
+                                <label for="phone" class="form-label"><?= $ml->tr('PHONE'); ?></label>
+                                <input type="text" name="phone" id="phone" class="form-control"
+                                    value="<?php echo $info->getUserPhoneNumber($username) ?>">
+                            </div>
+                            <div class="form-group my-2">
+                                <div class='form-check'>
+                                    <div class="checkbox">
+                                        <input type="checkbox" id="twofactor" name="twofactor" class='form-check-input' value="1" <?php if ($json_sett['usrsett'][$username]["twofactor"]["enable"] == 1) { echo "checked"; } ?>>
+                                        <label for="twofactor"><?= $ml->tr('TWOFACTORLOGIN'); ?></label>
+                                    </div>
+                                </div>
+                                <p><small class="text-muted"><?= $ml->tr('TWOFACTORLOGININFO'); ?></small></p>
+                            </div>
+
+                            <div class="form-group my-2 d-flex justify-content-end">
+                                <input type="hidden" name="username" value="<?php echo $username; ?>">
+                                <button type="submit" class="btn btn-primary"><?= $ml->tr('SAVE'); ?></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/bottom.php'; ?>

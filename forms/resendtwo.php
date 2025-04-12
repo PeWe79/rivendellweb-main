@@ -28,39 +28,71 @@
  *********************************************************************************************************/
 require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 $username = $_POST['username'];
-$fullname = $_POST['fullname'];
-$email = $_POST['email'];
-$phone = $_POST['phone'];
-$twofactor = $_POST['twofactor'];
 
-if (!$twofactor == 1) {
-    $twofactor = 0;
-}
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
-if ($twofactor == 1) {
-    $json_sett['usrsett'][$username]["twofactor"]["enable"] = 1;
+require $_SERVER['DOCUMENT_ROOT'] . '/includes/mail/src/Exception.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/includes/mail/src/PHPMailer.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/includes/mail/src/SMTP.php';
+
+if ($json_sett['usrsett'][$username]["twofactor"]["enable"] == 1) {
+    $logincode = $user->randomGenerator(5);
+    $time = strtotime('+5 minutes');
+    $expire = date('Y-m-d H:i:s', $time);
+    $email = $user->getUserEmail($username);
+    $fullname = $user->getUserFullName($email);
+    setcookie('twofactusr', $username, time() + 300, '/');
+    $json_sett["usrsett"][$username]["twofactor"]["code"] = $logincode;
+    $json_sett["usrsett"][$username]["twofactor"]["expire"] = $expire;
     $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
-    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
+    if (file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
+        $message = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/includes/mailtemp/twofactor-code.html');
+        $message = str_replace('%imglogo%', DIR . '/assets/static/images/rivlogo/rdairplay-128x128.png', $message);
+        $message = str_replace('%logincode%', $ml->tr('YOURLOGINCODE'), $message);
+        $message = str_replace('%hello%', $ml->tr('HELLONAME {{' . $fullname . '}}'), $message);
+        $message = str_replace('%loginwithcode%', $ml->tr('YOURLOGINCODEINFO'), $message);
+        $message = str_replace('%newcode%', $ml->tr('YOURLOGINCODEIS {{' . $logincode . '}}'), $message);
+        $message = str_replace('%enterthecode%', $ml->tr('USETHECODETOLOGIN'), $message);
+        $message = str_replace('%footernote%', $ml->tr('SENTFROM {{' . APPNAME . '}}'), $message);
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = SMTPSERV;
+        $mail->Port = SMTPPORT;
+        if ($json_sett["smtplogin"] == 1) {
+            $mail->SMTPAuth = true;
+            $mail->Username = SMTPUSER;
+            $mail->Password = SMTPPASS;
+            if ($json_sett["smtpenc"] == 1) {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } else {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
+        }
+        $mail->setFrom(SMTPFROM, APPNAME);
+        $mail->addAddress($email, $fullname);
+        $mail->Subject = $ml->tr('YOURLOGINCODE');
+        $mail->CharSet = 'utf-8';
+        $mail->IsHTML(true);
+        $mail->msgHTML($message);
+        if (!$mail->send()) {
+            $echodata = ['error' => 'true', 'errorcode' => '1'];
+            echo json_encode($echodata);
+        } else {
+            $echodata = ['error' => 'false', 'errorcode' => '0'];
+            echo json_encode($echodata);
+        }
+
+    } else {
         $echodata = ['error' => 'true', 'errorcode' => '1'];
         echo json_encode($echodata);
-        exit();
     }
+
+
+
+
 } else {
-    $json_sett['usrsett'][$username]["twofactor"]["enable"] = 0;
-    $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
-    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
-        $echodata = ['error' => 'true', 'errorcode' => '1'];
-        echo json_encode($echodata);
-        exit();
-    }
-}
-
-if (!$user->updateUserData($username, $fullname, $email, $phone)) {
     $echodata = ['error' => 'true', 'errorcode' => '1'];
     echo json_encode($echodata);
-} else {
-    $_COOKIE['fullname'] = $fullname;
-    $echodata = ['error' => 'false', 'errorcode' => '0'];
-    echo json_encode($echodata);
 }
-

@@ -80,6 +80,39 @@ class User
         return true;
     }
 
+    public function logintwo($username, $password, $remember)
+    {
+        if (!$this->isValidUsername($username)) {
+            return false;
+        }
+
+        if (strlen($password) < 3) {
+            return false;
+        }
+
+        $row = $this->get_user_hash($username);
+
+        if ($password == $row['PASSWORD']) {
+            if ($remember == 1) {
+                $expire = time() + (30 * 24 * 60 * 60);
+                setcookie('loggedin', 'true', $expire, '/');
+                setcookie('username', $row['LOGIN_NAME'], $expire, '/');
+                setcookie('fullname', $row['FULL_NAME'], $expire, '/');
+                setcookie('rdWebAPI', 'http://localhost/rd-bin/rdxport.cgi', $expire, '/');
+            } else {
+                $expire = time() + (3600 * 4);
+                setcookie('loggedin', 'true', $expire, '/');
+                setcookie('username', $row['LOGIN_NAME'], $expire, '/');
+                setcookie('fullname', $row['FULL_NAME'], $expire, '/');
+                setcookie('rdWebAPI', 'http://localhost/rd-bin/rdxport.cgi', $expire, '/');
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public function login($username, $password, $remember)
     {
         if (!$this->isValidUsername($username)) {

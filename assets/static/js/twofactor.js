@@ -1,3 +1,4 @@
+
 /*********************************************************************************************************
  *                                        RIVENDELL WEB BROADCAST                                        *
  *    A WEB SYSTEM TO USE WITH RIVENDELL RADIO AUTOMATION: HTTPS://GITHUB.COM/ELVISHARTISAN/RIVENDELL    *
@@ -25,80 +26,109 @@
  *             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE             *
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
-$('#login_form').validate({
-  rules: {
-    username: {
-      required: true,
-    },
-    password: {
-      required: true,
-      minlength: 5
-    },
-  },
-  messages: {
-    username: {
-      required: TRAN_ENTERUSERNAME
-    },
-    password: {
-      required: TRAN_ENTERPASSWORD
-    },
-  },
-  errorElement: 'span',
-  errorPlacement: function (error, element) {
-    error.addClass('parsley-error');
-    element.closest('.form-group').append(error);
-  },
-  highlight: function (element, errorClass, validClass) {
-    $(element).addClass('is-invalid');
-  },
-  unhighlight: function (element, errorClass, validClass) {
-    $(element).removeClass('is-invalid');
-  },
-  submitHandler: function () {
-    var dataString = $('#login_form').serialize();
+function resendCode(usrname) {
     jQuery.ajax({
         type: "POST",
-        url: HOST_URL+'/forms/login.php',
-        data: dataString,
+        url: HOST_URL + '/forms/resendtwo.php',
+        data: {
+            username: usrname,
+        },
+        datatype: 'html',
         success: function (data) {
             var mydata = $.parseJSON(data);
             var fel = mydata.error;
             var kod = mydata.errorcode;
-            var twofactor = mydata.twofactor;
-            if (fel == "false" && twofactor == 0) {
-                location.href = HOST_URL+"/dash";
-            } else if (fel == "false" && twofactor == 1) {
-              location.href = HOST_URL+"/twofactor";
-          } else {
-                if (kod == 1) {
-                    Swal.fire({
-                        text: TRAN_CHECKUSERPASS,
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: TRAN_OK,
-                        customClass: {
-                            confirmButton: "btn btn-primary"
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        text: TRAN_BUG,
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: TRAN_OK,
-                        customClass: {
-                            confirmButton: "btn btn-primary"
-                        }
-                    });
-                    
-                }
+            if (fel == "false") {
+                Swal.fire({
+                    text: TRAN_NEWCODEISSENT,
+                    icon: "success",
+                    buttonsStyling: false,
+                    confirmButtonText: TRAN_OK,
+                    customClass: {
+                        confirmButton: "btn btn-primary"
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = HOST_URL + "/twofactor";
+                    }
+                });
+
+            } else {
+                Swal.fire({
+                    text: TRAN_BUG,
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: TRAN_OK,
+                    customClass: {
+                        confirmButton: "btn btn-primary"
+                    }
+                });
             }
         }
     });
-  }
-});
 
-$(document).ready(function() {
-  $.cookieConsent({message: TRAN_THISSITEUSECOOKIE,
-  consentMessage: TRAN_THISSITEUSECOOKIEOK});
+}
+
+$('#twofactor_form').validate({
+    rules: {
+        code: {
+            required: true
+        }
+    },
+    messages: {
+        code: {
+            required: TRAN_NOTBEEMPTY,
+        },
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+        error.addClass('parsley-error');
+        element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+    },
+    submitHandler: function () {
+        var dataString = $('#twofactor_form').serialize();
+        jQuery.ajax({
+            type: "POST",
+            url: HOST_URL + '/forms/twofactor.php',
+            data: dataString,
+            success: function (data) {
+                var mydata = $.parseJSON(data);
+                var fel = mydata.error;
+                var kod = mydata.errorcode;
+                if (fel == "false") {
+                    location.href = HOST_URL + "/dash";
+
+                } else {
+                    if (kod == 1) {
+                        Swal.fire({
+                            text: TRAN_CHECKLOGINCODE,
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: TRAN_OK,
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            text: TRAN_BUG,
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: TRAN_OK,
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        });
+
+                    }
+                }
+            }
+        });
+    }
 });
