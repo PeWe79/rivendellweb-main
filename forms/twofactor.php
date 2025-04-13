@@ -47,11 +47,19 @@ if (!isset($_COOKIE['twofactusr'])) {
                 $rd_password = $functions->loadPass($username);
                 $remember = $json_sett['usrsett'][$username]["twofactor"]["remember"];
                 $rightcode = $json_sett['usrsett'][$username]["twofactor"]["code"];
-                if ($code == $rightcode) {
+                $isused = $json_sett['usrsett'][$username]["twofactor"]["used"];
+                if ($code == $rightcode && $isused == 0) {
                     if ($user->isValidUsername($username)) {
                         if ($user->logintwo($username, $rd_password, $remember)) {
-                            $echodata = ['error' => 'false', 'errorcode' => '0'];
-                            echo json_encode($echodata);
+                            $json_sett['usrsett'][$username]["twofactor"]["used"] = 1;
+                            $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+                            if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
+                                $echodata = ['error' => 'true', 'errorcode' => '1'];
+                                echo json_encode($echodata);
+                            } else {
+                                $echodata = ['error' => 'false', 'errorcode' => '0'];
+                                echo json_encode($echodata);
+                            }
                         } else {
                             $echodata = ['error' => 'true', 'errorcode' => '1'];
                             echo json_encode($echodata);

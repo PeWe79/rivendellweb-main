@@ -54,6 +54,7 @@ if ($json_sett['usrsett'][$username]["twofactor"]["enable"] == 1) {
         $json_sett["usrsett"][$username]["twofactor"]["code"] = $logincode;
         $json_sett["usrsett"][$username]["twofactor"]["expire"] = $expire;
         $json_sett["usrsett"][$username]["twofactor"]["remember"] = $remember;
+        $json_sett["usrsett"][$username]["twofactor"]["used"] = 0;
         $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
         if (file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
             $message = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/includes/mailtemp/twofactor-code.html');
