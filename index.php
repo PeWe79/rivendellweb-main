@@ -126,6 +126,7 @@ if ($user->is_logged_in()) {
     <script src="https://cdn.jsdelivr.net/npm/jquery.cookie-consent/dist/jquery.cookie-consent.min.js"></script>
     <script>
         var HOST_URL = "<?= DIR ?>";
+        var IS_OFFLINE = <?php echo CLOSEDOWNED; ?>;
         var TRAN_ENTERUSERNAME = "<?= $ml->tr('ENTERUSERNAME'); ?>";
         var TRAN_ENTERPASSWORD = "<?= $ml->tr('ENTERPASSWORD'); ?>";
         var TRAN_CHECKUSERPASS = "<?= $ml->tr('CHECKUSERPASS'); ?>";
@@ -136,6 +137,7 @@ if ($user->is_logged_in()) {
         var TRAN_BUG = "<?= $ml->tr('BUG'); ?>";
     </script>
     <script src="<?php echo DIR; ?>/assets/static/js/login.js"></script>
+    <script src="<?php echo DIR; ?>/assets/static/js/allpages_out.js"></script>
     <script src="<?php echo DIR; ?>/app.js"></script>
 </body>
 

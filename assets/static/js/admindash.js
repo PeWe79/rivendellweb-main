@@ -25,6 +25,66 @@
  *             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE             *
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
+var CONTROLLER = HOST_URL +"/update/controller.php";
+
+var sprintf = function () {
+	var message = arguments[0];
+	for (var i = 1; i < arguments.length; ++i) {
+		message = message.replaceAll('{' + (i - 1) + '}', arguments[i]);
+	}
+	return message;
+}
+
+function checkVersion() {
+    var current = false;
+	$.get(CONTROLLER, "action=VersionIsCurrent").then(function (data) {
+		current = data.current;
+		if (current) {
+            $("#updTitle").html(TRAN_NOUPDATES);
+			$("#infoUpdText").html(sprintf(TRAN_UPDATE_VERSIONUPTODATE, data.current_version));
+		}
+		else {
+			$.get(CONTROLLER, "action=ReleaseNotes").then(function (data2) {
+				if (data2.releaseNote) {
+                    $("#updTitle").html(TRAN_UPDATE_NEWVERSIONISAVALIABLEDASH);
+					$("#relNotesText").html(sprintf('<B>{0}</B>', data2.notes));
+					$("#relNewsInfoShow").show();
+                    $("#infoUpdText").html(sprintf(TRAN_UPDATE_VERSIONOUTOFDATE, data.current_version, data.update_version));
+                    $("#updbtnclick").show();
+				} else {
+                    $("#updTitle").html(TRAN_UPDATE_NEWVERSIONISAVALIABLEDASH);
+                    $("#infoUpdText").html(sprintf(TRAN_UPDATE_VERSIONOUTOFDATE, data.current_version, data.update_version));
+                    $("#updbtnclick").show();
+				}
+
+			}, failed);
+		}
+	},
+		failed);
+}
+
+var failed = function (xhr, status, error) {
+    $("#errorInfo").show();
+	$("#errorInfo").append(sprintf('<div class="error"><b>{0}</b></div>', TRAN_UPDATE_THEUPDATEFAILED));
+	if (status === 'parsererror') {
+		$("#errorInfo").append(xhr.responseText);
+	}
+	else {
+		$("#errorInfo").append(sprintf('<div class="error"><b>Status:</b> {0}</div>', status));
+		$("#errorInfo").append(sprintf('<div class="error"><b>Error:</b>  {0}</div>', error));
+
+		try {
+			var errorData = JSON.parse(xhr.responseText);
+			$("#errorInfo").append(sprintf('<div class="error"><b>Message:</b>  {0}</div>', errorData.message));
+			$("#errorInfo").append(sprintf('<div class="error"><b>Line:</b>  {0}</div>', errorData.line));
+			$("#errorInfo").append(sprintf('<div class="error"><b>File:</b>  {0}</div>', errorData.file));
+		}
+		catch (e) {
+			$("#errorInfo").append(printf('<div class="error"><b>Could not parse JSON:</b>  {0}</div>', e.message));
+		}
+	}
+}
+
 $('#usermess_form').validate({
     rules: {
         usrmess: {
@@ -83,3 +143,5 @@ $('#usermess_form').validate({
         });
     }
 });
+
+checkVersion();

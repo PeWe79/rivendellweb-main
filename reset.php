@@ -151,6 +151,7 @@ if (time() - $checktime > 15 * 60) {
     <script src="<?php echo DIR; ?>/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script>
         var HOST_URL = "<?= DIR ?>";
+        var IS_OFFLINE = <?php echo CLOSEDOWNED; ?>;
         var TRAN_NOTBEEMPTY = "<?= $ml->tr('NOTBEEMPTY'); ?>";
         var TRAN_PASSCHARMIN = "<?= $ml->tr('PASSCHARMIN'); ?>";
         var TRAN_PASSMUSTHAVESPECIALS = "<?= $ml->tr('PASSMUSTHAVESPECIAL'); ?>";
@@ -161,6 +162,7 @@ if (time() - $checktime > 15 * 60) {
         var TRAN_BUG = "<?= $ml->tr('BUG'); ?>";
     </script>
     <script src="<?php echo DIR; ?>/assets/static/js/reset.js"></script>
+    <script src="<?php echo DIR; ?>/assets/static/js/allpages_out.js"></script>
 </body>
 
 </html>

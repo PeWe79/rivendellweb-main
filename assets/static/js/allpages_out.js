@@ -25,50 +25,10 @@
  *             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE             *
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
-function changeLanguage(langcode) {
-    jQuery.ajax({
-        type: "POST",
-        url: HOST_URL + "/forms/switchlang.php",
-        data: {
-            lang: langcode
-        },
-        datatype: 'html',
-        success: function (data) {
-            var mydata = $.parseJSON(data);
-            var fel = mydata.error;
-            if (fel == "false") {
-                location.reload();
-            }
-        }
-    });
-}
-
-function SwitchService(servicename) {
-    jQuery.ajax({
-        type: "POST",
-        url: HOST_URL + "/forms/switchservice.php",
-        data: {
-            service: servicename
-        },
-        datatype: 'html',
-        success: function (data) {
-            var mydata = $.parseJSON(data);
-            var fel = mydata.error;
-            if (fel == "false") {
-                location.reload();
-            }
-        }
-    });
-}
-
 function MaintanceMode(status) {
     if (status == 1) {
-        location.href = A_HOST_URL + "/offline.php";
+        location.href = HOST_URL + "/offline.php";
     }
-}
-
-function closeWindowFunction() {
-  return "Do you wan't to close the window ?";
 }
 
 MaintanceMode(IS_OFFLINE);

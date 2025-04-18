@@ -77,6 +77,20 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json')) {
   $json_string = file_get_contents($filepath);
   $loggen_data = json_decode($json_string, true);
 }
+if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/loggenlines.json')) {
+  $loggenlines_data = array();
+} else {
+  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/loggenlines.json';
+  $json_string = file_get_contents($filepath);
+  $loggenlines_data = json_decode($json_string, true);
+}
+if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_data.json')) {
+  $loggenart_data = array();
+} else {
+  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/loggen_data.json';
+  $json_string = file_get_contents($filepath);
+  $loggenart_data = json_decode($json_string, true);
+}
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_log.json')) {
   $loggenlog_data = array();
 } else {
@@ -96,13 +110,19 @@ define('SMTPUSER', $json_sett['smtpusr']);
 define('SMTPPASS', $json_sett['smtppass']);
 define('SMTPFROM', $json_sett['smtpfrom']);
 define('DEFAULTLANG', $json_sett['deflang']);
-define('VERS', '0.6.1'); //DO NOT CHANGE THIS!
+define('VERS', '0.6.2'); //DO NOT CHANGE THIS!
 define('DBOK', '375'); //DO NOT CHANGE THIS!
 define('SYSTIT', 'Rivendell Web Broadcast'); //DO NOT CHANGE THIS!
 define('APIURL', 'http://localhost/rd-bin/rdxport.cgi'); //DO NOT CHANGE THIS!
 define('USERESET', $json_sett['usereset']);
 define('AUTOTRIM', $json_sett['autotrim']);
 define('NORMALIZE', $json_sett['normalize']);
+if (isset($json_sett['closedown'])) {
+  define('CLOSEDOWNED', $json_sett['closedown']);
+} else {
+  define('CLOSEDOWNED', 0);
+}
+
 
 /***************************************************
  * THE DATABASE INFORMATION GETS FROM RD.CONF FILE *

@@ -1,3 +1,4 @@
+<?php
 /*********************************************************************************************************
  *                                        RIVENDELL WEB BROADCAST                                        *
  *    A WEB SYSTEM TO USE WITH RIVENDELL RADIO AUTOMATION: HTTPS://GITHUB.COM/ELVISHARTISAN/RIVENDELL    *
@@ -25,50 +26,55 @@
  *             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE             *
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
-function changeLanguage(langcode) {
-    jQuery.ajax({
-        type: "POST",
-        url: HOST_URL + "/forms/switchlang.php",
-        data: {
-            lang: langcode
-        },
-        datatype: 'html',
-        success: function (data) {
-            var mydata = $.parseJSON(data);
-            var fel = mydata.error;
-            if (fel == "false") {
-                location.reload();
-            }
-        }
-    });
+include_once "updateController.php";
+
+// Define a custom error handler
+function customErrorHandler($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        // This error code is not included in error_reporting
+        return;
+    }
+    // Convert error to an exception
+    throw new ErrorException($message, 0, $severity, $file, $line);
 }
 
-function SwitchService(servicename) {
-    jQuery.ajax({
-        type: "POST",
-        url: HOST_URL + "/forms/switchservice.php",
-        data: {
-            service: servicename
-        },
-        datatype: 'html',
-        success: function (data) {
-            var mydata = $.parseJSON(data);
-            var fel = mydata.error;
-            if (fel == "false") {
-                location.reload();
-            }
-        }
-    });
-}
+// Set the custom error handler
+set_error_handler("customErrorHandler");
 
-function MaintanceMode(status) {
-    if (status == 1) {
-        location.href = A_HOST_URL + "/offline.php";
+header("content-type: application/json");
+$action = $_GET["action"];
+$controller = new Controller();
+call_user_func(array($controller,$action));
+
+// a decorator controller so that handling exceptions is easier
+class Controller
+{
+    private $updateController;
+
+    public function __construct()
+    {
+        $this->updateController = new UpdateController();
+    }
+
+    public function __call($name,$arguments)
+    {
+        try
+        {
+            return call_user_func([$this->updateController,$name]);
+        }
+        catch(Exception $ex)
+        {
+            http_response_code(500);
+
+            $response = [
+                'error' => true,
+                'message' => $ex->getMessage(),
+                'file' => $ex->getFile(),
+                'line' => $ex->getLine()
+            ];
+            echo json_encode($response);
+
+            exit;
+        }
     }
 }
-
-function closeWindowFunction() {
-  return "Do you wan't to close the window ?";
-}
-
-MaintanceMode(IS_OFFLINE);

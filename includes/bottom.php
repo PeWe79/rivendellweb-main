@@ -13,6 +13,10 @@
     
 
     <?php if (isset($page_js)) { echo $page_js; }?>
+    <SCRIPT>
+    var IS_OFFLINE = <?php echo CLOSEDOWNED; ?>;
+    var A_HOST_URL = "<?php echo DIR; ?>"
+    </SCRIPT>
     <script src="<?php echo DIR; ?>/assets/static/js/allpages.js"></script>
 
 </body>

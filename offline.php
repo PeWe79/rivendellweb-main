@@ -1,3 +1,4 @@
+<?php
 /*********************************************************************************************************
  *                                        RIVENDELL WEB BROADCAST                                        *
  *    A WEB SYSTEM TO USE WITH RIVENDELL RADIO AUTOMATION: HTTPS://GITHUB.COM/ELVISHARTISAN/RIVENDELL    *
@@ -25,50 +26,39 @@
  *             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE             *
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
-function changeLanguage(langcode) {
-    jQuery.ajax({
-        type: "POST",
-        url: HOST_URL + "/forms/switchlang.php",
-        data: {
-            lang: langcode
-        },
-        datatype: 'html',
-        success: function (data) {
-            var mydata = $.parseJSON(data);
-            var fel = mydata.error;
-            if (fel == "false") {
-                location.reload();
-            }
-        }
-    });
-}
+require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 
-function SwitchService(servicename) {
-    jQuery.ajax({
-        type: "POST",
-        url: HOST_URL + "/forms/switchservice.php",
-        data: {
-            service: servicename
-        },
-        datatype: 'html',
-        success: function (data) {
-            var mydata = $.parseJSON(data);
-            var fel = mydata.error;
-            if (fel == "false") {
-                location.reload();
-            }
-        }
-    });
-}
+?>
+<!DOCTYPE html>
+<html lang="en">
 
-function MaintanceMode(status) {
-    if (status == 1) {
-        location.href = A_HOST_URL + "/offline.php";
-    }
-}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $ml->tr('UPDATE_WEUPDATEING'); ?></title>
+    <link rel="shortcut icon" href="<?php echo DIR ?>/AppImages/favicon.ico" />
+    <link rel="stylesheet" href="<?php echo DIR ?>/assets/compiled/css/app.css">
+    <link rel="stylesheet" href="<?php echo DIR ?>/assets/compiled/css/app-dark.css">
+    <link rel="stylesheet" crossorigin href="<?php echo DIR ?>/assets/compiled/css/error.css">
+</head>
 
-function closeWindowFunction() {
-  return "Do you wan't to close the window ?";
-}
+<body>
+    <script src="assets/static/js/initTheme.js"></script>
+    <div id="error">
 
-MaintanceMode(IS_OFFLINE);
+
+        <div class="error-page container">
+            <div class="col-md-8 col-12 offset-md-2">
+                <div class="text-center">
+                    <img class="img-error" src="<?php echo DIR ?>/assets/compiled/svg/construction.svg" alt="Forbidden">
+                    <h1 class="error-title"><?= $ml->tr('UPDATE_WEUPDATEING'); ?></h1>
+                    <p class="fs-5 text-gray-600"><?= $ml->tr('UPDATE_WEUPDATEINGINFO'); ?></p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</body>
+
+</html>

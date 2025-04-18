@@ -123,6 +123,7 @@ $username = $_COOKIE['twofactusr'];
     <script src="<?php echo DIR; ?>/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script>
         var HOST_URL = "<?= DIR ?>";
+        var IS_OFFLINE = <?php echo CLOSEDOWNED; ?>;
         var TRAN_NOTBEEMPTY = "<?= $ml->tr('NOTBEEMPTY'); ?>";
         var TRAN_CHECKLOGINCODE = "<?= $ml->tr('CHECKLOGINCODE'); ?>";
         var TRAN_NEWCODEISSENT = "<?= $ml->tr('NEWCODEISSENT'); ?>";
@@ -130,6 +131,7 @@ $username = $_COOKIE['twofactusr'];
         var TRAN_BUG = "<?= $ml->tr('BUG'); ?>";
     </script>
     <script src="<?php echo DIR; ?>/assets/static/js/twofactor.js"></script>
+    <script src="<?php echo DIR; ?>/assets/static/js/allpages_out.js"></script>
 </body>
 
 </html>

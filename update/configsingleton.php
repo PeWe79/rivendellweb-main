@@ -1,3 +1,4 @@
+<?php
 /*********************************************************************************************************
  *                                        RIVENDELL WEB BROADCAST                                        *
  *    A WEB SYSTEM TO USE WITH RIVENDELL RADIO AUTOMATION: HTTPS://GITHUB.COM/ELVISHARTISAN/RIVENDELL    *
@@ -25,50 +26,47 @@
  *             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE             *
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
-function changeLanguage(langcode) {
-    jQuery.ajax({
-        type: "POST",
-        url: HOST_URL + "/forms/switchlang.php",
-        data: {
-            lang: langcode
-        },
-        datatype: 'html',
-        success: function (data) {
-            var mydata = $.parseJSON(data);
-            var fel = mydata.error;
-            if (fel == "false") {
-                location.reload();
-            }
+class ConfigSingleton
+{
+      protected function __construct()
+      {
+        $config[] = array();
+        require_once(__DIR__."/config.php");
+        $this->config = $config;
+      }
+
+      private function __close()
+      {
+
+      }
+      private function __wakeup()
+      {
+
+      }
+
+      public function __get($name)
+      {
+        if(!isset($this->config))
+        {
+          throw new Exception("Configuration array does not exist");
         }
-    });
-}
-
-function SwitchService(servicename) {
-    jQuery.ajax({
-        type: "POST",
-        url: HOST_URL + "/forms/switchservice.php",
-        data: {
-            service: servicename
-        },
-        datatype: 'html',
-        success: function (data) {
-            var mydata = $.parseJSON(data);
-            var fel = mydata.error;
-            if (fel == "false") {
-                location.reload();
-            }
+        else if(array_key_exists($name,$this->config))
+        {
+          return $this->config[$name];
         }
-    });
-}
+        else
+        {
+          throw new Exception("$name is not in the configuration array");
+        }
+      }
 
-function MaintanceMode(status) {
-    if (status == 1) {
-        location.href = A_HOST_URL + "/offline.php";
-    }
+      public static function Instance()
+      {
+        static $instance = null;
+        if($instance === null)
+        {
+          $instance = new ConfigSingleton();
+        }
+        return $instance;
+      }
 }
-
-function closeWindowFunction() {
-  return "Do you wan't to close the window ?";
-}
-
-MaintanceMode(IS_OFFLINE);
