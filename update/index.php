@@ -28,6 +28,11 @@
  *********************************************************************************************************/
 require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 
+if (!isset($json_sett["admin"][$_COOKIE['username']]["username"])) {
+    header('Location: ' . DIR . '/login');
+    exit();
+}
+
 $json_sett["closedown"] = 1;
 
 $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
