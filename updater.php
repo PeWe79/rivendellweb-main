@@ -70,7 +70,7 @@ $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
                         <P>This update has moved RDCatch to regular user use. No longer need admin rights to use it.</P>
                         <P>You need to give the user right to use RDCatch function in user settings. You will find Special User Rights where you give your user rights to use RDCatch. You need also to give your self access to it.</P>
                         <P class="col-sm-12 d-flex justify-content-end"><a target="_blank"
-                                href="https://olsson82.github.io/rivwebdoc/" class="btn btn-info">Documentation</a> <a
+                                href="https://docs.rivendellwebsys.com/" class="btn btn-info">Documentation</a> <a
                                 href="<?php echo DIR; ?>/dash" class="btn btn-success">Go to dashboard</a></P>
                                 <?php } ?>
 

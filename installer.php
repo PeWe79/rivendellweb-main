@@ -433,7 +433,7 @@ $errors = 0;
                                 risk. Always test if first before use it on a production machine.</B></P>
                         <P>When you are ready to install, click on next.</P>
                         <P class="col-sm-12 d-flex justify-content-end"><a target="_blank"
-                                href="https://olsson82.github.io/rivwebdoc/" class="btn btn-info">Documentation</a> <a
+                                href="https://docs.rivendellwebsys.com/" class="btn btn-info">Documentation</a> <a
                                 href="installer.php?install=1" class="btn btn-success">Next ></a></P>
 
                     </div>

@@ -5,7 +5,7 @@ Web system for manage Rivendell Radio Automation created by Andreas Olsson to he
 
 The goal with this is to be able to do the most things from this system.
 
-**This is still in development so there can be things that not works, contain bugs and things can be changed. You use it at your own risk. Do not use it on a live rivendell machine unless you know what you are doing, and that you know it will not brake your system. Before you do anything. Read the [**Documentation**](https://olsson82.github.io/rivwebdoc/)**
+**This is still in development so there can be things that not works, contain bugs and things can be changed. You use it at your own risk. Do not use it on a live rivendell machine unless you know what you are doing, and that you know it will not brake your system. Before you do anything. Read the [**Documentation**](https://docs.rivendellwebsys.com/)**
 
 **Please be advice that this system use BOTH Rivendells API and also do direct changes in the database**
 
@@ -35,7 +35,7 @@ To use this you need a machine that have Rivendell installed. This system can no
 
 The system has a installer, and no files need to be modified. Read the installation section in the documentation.
 
-[**See the documentation for more info**](https://olsson82.github.io/rivwebdoc/)
+[**See the documentation for more info**](https://docs.rivendellwebsys.com/)
 
 ## Translation
 [![Crowdin](https://badges.crowdin.net/rivendell-web-broadcast/localized.svg)](https://crowdin.com)
