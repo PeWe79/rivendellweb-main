@@ -451,6 +451,10 @@ var KTDatatablesServerSide = function () {
             processing: true,
             serverSide: true,
             responsive: true,
+            lengthMenu: [
+                [10, 50, 100, 500],
+                [10, 50, 100, 500]
+            ],
             select: {
                 style: 'multi',
                 selector: 'td:first-child input[type="checkbox"]',
