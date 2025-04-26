@@ -54,7 +54,7 @@ $plugin_js = '<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js
 <script src="' . DIR . '/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
 <script src="' . DIR . '/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
 <script src="' . DIR . '/assets/static/js/pages/datatables.js"></script>';
-$page_js = '<script src="' . DIR . '/assets/static/js/library.js"></script>';
+$page_js = '<script src="' . DIR . '/assets/static/js/library.js?v2"></script>';
 ?>
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/top.php'; ?>
 
