@@ -111,8 +111,15 @@ if ($ok == $totaldata) {
         $echodata = ['error' => 'true', 'errorcode' => '1'];
         echo json_encode($echodata);
     } else {
-        $echodata = ['error' => 'false', 'errorcode' => '0'];
-        echo json_encode($echodata);
+        if (!$dbfunc->updateMacro($number, $json_sett['macrodata'][$_COOKIE['username']]['currmacro'])) {
+            $echodata = ['error' => 'true', 'errorcode' => '1'];
+            echo json_encode($echodata);
+        } else {
+
+            $echodata = ['error' => 'false', 'errorcode' => '0'];
+            echo json_encode($echodata);
+
+        }
     }
 
 } else {

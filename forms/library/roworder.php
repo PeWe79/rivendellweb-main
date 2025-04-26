@@ -31,7 +31,7 @@ $id = $_POST["id"];
 $macro = $_POST["macro"];
 $order = $_POST["order"];
 $cart = $_POST["cart"];
-$macrodata = $info->getCartInfo($cart, 'MACROS');
+$macrodata = $json_sett['macrodata'][$_COOKIE['username']]['currmacro'];
 $macroArray = explode('!', rtrim($macrodata, '!'));
 $newstring;
 $rows = 0;
@@ -39,21 +39,23 @@ $last = count($macroArray) - 1;
 if ($order == 0 && $id != 0) {
     $beforeplace = $id - 1;
     $oldone = $macroArray[$beforeplace];
-    $newone = $macroArray[$id];     
+    $newone = $macroArray[$id];
 
     foreach ($macroArray as $key => $val) {
         $rows = $rows + 1;
         if ($key == $beforeplace) {
-            $macroArray[$key] = $newone;            
+            $macroArray[$key] = $newone;
         }
         if ($key == $id) {
-            $macroArray[$key] = $oldone;            
+            $macroArray[$key] = $oldone;
         }
         $macroArray[$key] = $macroArray[$key] . '!';
         $newstring = $newstring .= $macroArray[$key];
     }
 
-    if (!$dbfunc->updateMacro($cart, $newstring)) {
+    $json_sett['macrodata'][$_COOKIE['username']]['currmacro'] = $newstring;
+    $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
         $echodata = ['error' => 'true', 'errorcode' => '1'];
         echo json_encode($echodata);
     } else {
@@ -65,21 +67,23 @@ if ($order == 0 && $id != 0) {
 if ($order == 1 && $id != $last) {
     $beforeplace = $id + 1;
     $oldone = $macroArray[$beforeplace];
-    $newone = $macroArray[$id];     
+    $newone = $macroArray[$id];
 
     foreach ($macroArray as $key => $val) {
         $rows = $rows + 1;
         if ($key == $beforeplace) {
-            $macroArray[$key] = $newone;            
+            $macroArray[$key] = $newone;
         }
         if ($key == $id) {
-            $macroArray[$key] = $oldone;            
+            $macroArray[$key] = $oldone;
         }
         $macroArray[$key] = $macroArray[$key] . '!';
         $newstring = $newstring .= $macroArray[$key];
     }
 
-    if (!$dbfunc->updateMacro($cart, $newstring)) {
+    $json_sett['macrodata'][$_COOKIE['username']]['currmacro'] = $newstring;
+    $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
         $echodata = ['error' => 'true', 'errorcode' => '1'];
         echo json_encode($echodata);
     } else {

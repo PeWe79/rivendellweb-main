@@ -35,7 +35,7 @@ $isedit = $_POST['isedit'];
 $newstring;
 $rows = 0;
 if ($isedit == 1) {
-    $macrodata = $info->getCartInfo($cart, 'MACROS');
+    $macrodata = $json_sett['macrodata'][$_COOKIE['username']]['currmacro'];
     $macroArray = explode('!', rtrim($macrodata, '!'));
 
     foreach ($macroArray as $key => $val) {
@@ -47,7 +47,9 @@ if ($isedit == 1) {
         $newstring = $newstring .= $macroArray[$key];
     }
 
-    if (!$dbfunc->updateMacro($cart, $newstring)) {
+    $json_sett['macrodata'][$_COOKIE['username']]['currmacro'] = $newstring;
+    $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
         $echodata = ['error' => 'true', 'errorcode' => '1'];
         echo json_encode($echodata);
     } else {
@@ -56,10 +58,12 @@ if ($isedit == 1) {
     }
 } else {
 
-    $macrodata = $info->getCartInfo($cart, 'MACROS');
+    $macrodata = $json_sett['macrodata'][$_COOKIE['username']]['currmacro'];
     $macrodata = $macrodata .= $commando;
 
-    if (!$dbfunc->updateMacro($cart, $macrodata)) {
+    $json_sett['macrodata'][$_COOKIE['username']]['currmacro'] = $macrodata;
+    $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
         $echodata = ['error' => 'true', 'errorcode' => '1'];
         echo json_encode($echodata);
     } else {

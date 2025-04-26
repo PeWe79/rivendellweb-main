@@ -226,7 +226,7 @@ $languagesArray = array(
 /***********************************************
  * TO DO UPDATE TO SUPPORT NEW RDCATCH CHANGES *
  ***********************************************/
-if ($json_sett['jsonID'] != 'AxZQ9f3fEUkLz25131' && isset($json_sett["admin"][$_COOKIE['username']]["username"])) {
+if ($json_sett['jsonID'] != 'AxZQ9f3fEUWaF5423235SFA' && isset($json_sett["admin"][$_COOKIE['username']]["username"])) {
   header('Location: ' . DIR . '/updater');
   //exit(); 
 }

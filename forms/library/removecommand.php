@@ -32,7 +32,7 @@ $commando = $_POST['macro'];
 $lineid = $_POST['lineid'];
 $newstring;
 $rows = 0;
-$macrodata = $info->getCartInfo($cart, 'MACROS');
+$macrodata = $json_sett['macrodata'][$_COOKIE['username']]['currmacro'];
 $macroArray = explode('!', rtrim($macrodata, '!'));
 unset($macroArray[$lineid - 1]);
 foreach ($macroArray as $key => $val) {
@@ -41,10 +41,12 @@ foreach ($macroArray as $key => $val) {
     $newstring = $newstring .= $macroArray[$key];
 }
 
-if (!$dbfunc->updateMacro($cart, $newstring)) {
-    $echodata = ['error' => 'true', 'errorcode' => '1'];
-    echo json_encode($echodata);
-} else {
-    $echodata = ['error' => 'false', 'errorcode' => '0'];
-    echo json_encode($echodata);
-}
+$json_sett['macrodata'][$_COOKIE['username']]['currmacro'] = $newstring;
+    $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
+        $echodata = ['error' => 'true', 'errorcode' => '1'];
+        echo json_encode($echodata);
+    } else {
+        $echodata = ['error' => 'false', 'errorcode' => '0'];
+        echo json_encode($echodata);
+    }

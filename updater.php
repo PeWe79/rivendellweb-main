@@ -28,7 +28,7 @@
  *********************************************************************************************************/
 require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 $error = 0;
-$json_sett["jsonID"] = "AxZQ9f3fEUkLz25131";
+$json_sett["jsonID"] = "AxZQ9f3fEUWaF5423235SFA";
 $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
 
     if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
@@ -67,8 +67,8 @@ $jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
                         <?php if ($error == 1) { ?>
                             <P>Ooops! Looks like the update was not possible to do. Please check file write in the data folder.</P>
                         <?php } else { ?>
-                        <P>This update has moved RDCatch to regular user use. No longer need admin rights to use it.</P>
-                        <P>You need to give the user right to use RDCatch function in user settings. You will find Special User Rights where you give your user rights to use RDCatch. You need also to give your self access to it.</P>
+                        <P>This update has done changes to macro edit. Commandos are now stored temporarly and will be saved when you press save button.</P>
+                        <P>If you close page without save the macro, changes to commandos will not be saved.</P>
                         <P class="col-sm-12 d-flex justify-content-end"><a target="_blank"
                                 href="https://docs.rivendellwebsys.com/" class="btn btn-info">Documentation</a> <a
                                 href="<?php echo DIR; ?>/dash" class="btn btn-success">Go to dashboard</a></P>

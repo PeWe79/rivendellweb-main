@@ -28,7 +28,7 @@
  *********************************************************************************************************/
 require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 $cart = $_GET['cartid'];
-$macrodata = $info->getCartInfo($cart, 'MACROS');
+$macrodata = $json_sett['macrodata'][$_COOKIE['username']]['currmacro'];
 $macroArray = explode('!', rtrim($macrodata, '!'));
 $datatable = array();
 $dataArray = array();

@@ -40,6 +40,13 @@ $schedCodes = $dbfunc->getSchedulerCodes();
 $id = $_GET['id'];
 $pagecode = "library";
 
+$json_sett['macrodata'][$_COOKIE['username']]['currmacro'] = $info->getCartInfo($id, 'MACROS');
+$jsonsettings = json_encode($json_sett, JSON_UNESCAPED_SLASHES);
+if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/settings.json', $jsonsettings)) {
+    header('Location: '.DIR.'/library/carts');
+    exit();
+}
+
 if (!$info->checkMacroNormal($id, 2)) {
     header('Location: '.DIR.'/library/carts/cart/audio/'.$_GET['id']);
     exit();
