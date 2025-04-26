@@ -225,7 +225,14 @@ class Getinfo
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($row['LOCK_USER_NAME'] != null) {
-                        return true;
+                        $now = time();
+                        $datetime_timestamp = strtotime($row['LOCK_DATETIME']);
+                        $diff = $now - $datetime_timestamp;
+                        if ($diff > 120) { // 120 seconds = 2 minutes
+                                return false;
+                            } else {
+                                return true;
+                            }                        
                 } else {
                         return false;
                 }
