@@ -293,7 +293,7 @@ var addMarkerForm = $('#addMarker_form').validate({
                 var mydata = $.parseJSON(data);
                 var fel = mydata.error;
                 var kod = mydata.errorcode;
-                if (fel == "false") {  
+                if (fel == "false") {
                     $("#addMarker_form").trigger("reset");
                     dt.ajax.reload();
                     $('#add_marker').modal('hide');
@@ -425,7 +425,7 @@ var addCartForm = $('#addCart_form').validate({
                 var mydata = $.parseJSON(data);
                 var fel = mydata.error;
                 var kod = mydata.errorcode;
-                if (fel == "false") {                      
+                if (fel == "false") {
                     $("#addCart_form").trigger("reset");
                     dt.ajax.reload();
                     $('#add_cart').modal('hide');
@@ -548,14 +548,29 @@ $('#selectGroup').on('change', function (e) {
     }
 });
 
-function addcart(cart, type, title, artist) {
-    $("#cart_value").val(cart);
-    $("#title_value").val(title);
-    $("#artist_value").val(artist);
-    $("#carttype_imp").val(type);
-    $("#cartno_imp").val(cart);
-    $("#subbut_cart").removeAttr('disabled');
-    editmodal.hide();
+function addcart(cart, type) {
+    jQuery.ajax({
+        type: "POST",
+        async: false,
+        url: HOST_URL + '/forms/logs/getcartinfo.php',
+        data: {
+            id: cart
+        },
+        datatype: 'html',
+        success: function (data) {
+            var mydata = $.parseJSON(data);
+            dt.ajax.reload();
+            $("#cart_value").val(cart);
+            $("#title_value").val(mydata.title);
+            $("#artist_value").val(mydata.artist);
+            $("#carttype_imp").val(type);
+            $("#cartno_imp").val(cart);
+            $("#subbut_cart").removeAttr('disabled');
+            editmodal.hide();
+
+        }
+    });
+
 }
 
 function addchain(logname, description) {
@@ -1075,8 +1090,8 @@ var KTDatatablesServerSide = function () {
                         if (row.TIME_TYPE == 1) {
                             return `<P style="color:#0054c2">S` + msToTime(data) + `</p>`;
                         } else {
-                                return msToTime(row.FAKE_TIME)                            
-                            
+                            return msToTime(row.FAKE_TIME)
+
                         }
                     }
                 },
@@ -1725,7 +1740,7 @@ var KTDatatablesServerSideLibrary = function () {
                     className: 'text-end',
                     render: function (data, type, row) {
                         return `
-                        <a href="javascript:;" onclick="addcart('`+ row.NUMBER + `', '` + row.TYPE + `', '` + row.TITLE + `', '` + row.ARTIST + `')" class="btn icon btn-info"><i class="bi bi-plus-square"></i></a>`;
+                        <a href="javascript:;" onclick="addcart('`+ row.NUMBER + `', '` + row.TYPE + `')" class="btn icon btn-info"><i class="bi bi-plus-square"></i></a>`;
                     }
                 },
             ],

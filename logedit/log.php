@@ -301,7 +301,7 @@ $plugin_js = '<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js
 <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
 <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.min.js"></script>
 <script src="' . DIR . '/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>';
-$page_js = '<script src="' . DIR . '/assets/static/js/log.js"></script>';
+$page_js = '<script src="' . DIR . '/assets/static/js/log.js?356342324"></script>';
 
 ?>
 
