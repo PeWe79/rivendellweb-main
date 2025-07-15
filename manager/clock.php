@@ -68,7 +68,7 @@ $plugin_js = '<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js
 <script src="'.DIR.'/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
 <script src="'.DIR.'/assets/extensions/inputmask/jquery.inputmask.js"></script>
 <script src="'.DIR.'/assets/static/js/pages/datatables.js"></script>';
-$page_js = '<script src="'.DIR.'/assets/static/js/clock.js"></script>';
+$page_js = '<script src="'.DIR.'/assets/static/js/clock.js?17476740369"></script>';
 
 ?>
 

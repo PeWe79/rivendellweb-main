@@ -32,6 +32,7 @@ $clocklines = $dbfunc->getClockLinesData($clock);
 $valuesdata = array();
 $labelsdata = array();
 $colordata = array();
+$iddata = array();
 $totalpercent = 0;
 
 foreach ($clocklines as $line) {
@@ -42,14 +43,16 @@ $totalpercent = $totalpercent + $percent;
 $valuesdata[] = $percent;
 $labelsdata[] = $line['EVENT_NAME'];
 $colordata[] = $line['COLOR'];
+$iddata[] = $line['ID'];
 }
 if ($totalpercent < 98) {
     $totalthis = 100 - $totalpercent;
     $valuesdata[] = number_format((float)$totalthis, 2);
     $labelsdata[] = $ml->tr('NONE');
     $colordata[] = '#ffffff';
+    $iddata[] = '0';
 }
 
-$finaldata = array('labels'=> $labelsdata, 'values'=> $valuesdata, 'color'=> $colordata);
+$finaldata = array('labels'=> $labelsdata, 'values'=> $valuesdata, 'color'=> $colordata, 'idno'=> $iddata);
 
 echo json_encode($finaldata);

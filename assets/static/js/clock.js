@@ -34,6 +34,7 @@ var evid;
 var doedit = 0;
 var editmodal;
 var chart;
+var ctx;
 
 Inputmask({
     "mask": "99:99.9"
@@ -64,9 +65,9 @@ function tr(translate) {
     });
 }
 
-jQuery.validator.addMethod("noSpace", function(value, element) { 
-    return value.indexOf(" ") < 0 && value != ""; 
-  }, TRAN_NOSPACEALLOWED);
+jQuery.validator.addMethod("noSpace", function (value, element) {
+    return value.indexOf(" ") < 0 && value != "";
+}, TRAN_NOSPACEALLOWED);
 
 let choices = document.querySelectorAll(".choices")
 let initChoice
@@ -138,32 +139,39 @@ if (elements && elements.length > 0) {
 }
 
 function updateClock(clock) {
-    $.getJSON(HOST_URL + '/forms/clock/getclockvalues.php?clock='+clock, function(data) {
+    $.getJSON(HOST_URL + '/forms/clock/getclockvalues.php?clock=' + clock, function (data) {
 
-        var ctx = document.getElementById('chart').getContext('2d');
-   chart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: data.labels,
-      datasets: [{
-        label: 'Dataset',
-        data: data.values,
-        backgroundColor: data.color,
-        borderWidth: 1
-      }]
-    },
-    options: {
-      plugins: {
-        tooltip: {
-          enabled: false, // Disable tooltips
-        },
-        legend: {
-            display: false
-          }
-      }
-    }
-  });
-});
+        ctx = document.getElementById('chart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Dataset',
+                    data: data.values,
+                    backgroundColor: data.color,
+                    idno: data.idno,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    tooltip: {
+                        enabled: false, // Disable tooltips
+                    },
+                    legend: {
+                        display: false
+                    },
+                },
+                onClick: (event, elements, chart) => {
+                    if (elements[0]) {
+                        const i = elements[0].index;
+                        clone(chart.data.datasets[0].idno[i], 1);
+                    }
+                }
+            }
+        });
+    });
 }
 
 function editshed(code, clock) {
