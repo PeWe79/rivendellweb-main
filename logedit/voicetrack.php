@@ -66,7 +66,7 @@ $plugin_js = '<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js
 <script src="' . DIR . '/assets/extensions/waveform/waveform-playlist.js"></script>
 <script src="' . DIR . '/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>';
 $page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
-<script src="' . DIR . '/assets/static/js/multitrack.js"></script>';
+<script src="' . DIR . '/assets/static/js/multitrack.js?3246543566"></script>';
 
 ?>
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/top.php'; ?>

@@ -25,506 +25,624 @@
  *             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE             *
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
-let wavesurfer, record
-let scrollingWaveform = false
-var lineid;
-var vtgroup;
-var cartid;
-var logname;
-var username;
-let newblob;
+let multitrack;
+var ee;
+var tr1segstart;
+var tr2segstart;
+var tr3segstart;
+var tr1lineid;
+var tr2lineid;
+var tr3lineid;
+var tra1end;
+var tra2end;
+var tra3end;
+var thelog;
+var totaltracks = 0;
 
-const createWaveSurfer = () => {
-    if (wavesurfer) {
-        wavesurfer.destroy()
-    }
-    wavesurfer = WaveSurfer.create({
-        container: '#mic',
-        waveColor: 'rgb(200, 0, 200)',
-        progressColor: 'rgb(100, 0, 100)',
-    })
+function doMultitrack(lineid, logname) {
+    var tracks;
+    var roword;
+    var totrows;
+    var abow;
+    var below;
+    var begincount;
+    var addnext = 0;
+    var i = 0;
+    var isdone = 0;
+    var cartnomb;
+    var nextstart;
+    var segstartpoint;
+    totaltracks = 0;
+    var theTracks = Array();
+    thelog = logname;
 
-    record = wavesurfer.registerPlugin(WaveSurfer.Record.create({ scrollingWaveform, renderRecordedAudio: false }))
-
-    record.on('record-end', (blob) => {
-        const container = document.querySelector('#recordings')
-        const recordedUrl = URL.createObjectURL(blob)
-
-        const wavesurfer = WaveSurfer.create({
-            container,
-            waveColor: 'rgb(200, 100, 0)',
-            progressColor: 'rgb(100, 50, 0)',
-            url: recordedUrl,
-        })
-        let xrid = Math.floor((Math.random() * 100) + 1);
-        const button = container.appendChild(document.createElement('button'))
-        button.textContent = TRAN_PLAY
-        button.className = "btn btn-success"
-        button.onclick = () => wavesurfer.playPause()
-        wavesurfer.on('pause', () => (button.textContent = TRAN_PLAY))
-        wavesurfer.on('play', () => (button.textContent = TRAN_PAUSE))
-        const buttonsave = container.appendChild(document.createElement('button'))
-        buttonsave.textContent = TRAN_SAVEREQ
-        buttonsave.className = "btn btn-warning"
-        buttonsave.id = xrid
-        buttonsave.onclick = () => convertBlobToAudioBuffer(blob, lineid, vtgroup, xrid)
-        const link = container.appendChild(document.createElement('a'))
-        Object.assign(link, {
-            href: recordedUrl,
-            className: "btn btn-primary",
-            download: 'recording.' + blob.type.split(';')[0].split('/')[1] || 'webm',
-            textContent: TRAN_DOWN_REQ,
-        })
-    })
-    pauseButton.style.display = 'none'
-    recButton.textContent = TRAN_RECORD
-
-    record.on('record-progress', (time) => {
-        updateProgress(time)
-    })
-
-}
-
-const progress = document.querySelector('#progress')
-const updateProgress = (time) => {
-    const formattedTime = [
-        Math.floor((time % 3600000) / 60000),
-        Math.floor((time % 60000) / 1000),
-    ]
-        .map((v) => (v < 10 ? '0' + v : v))
-        .join(':')
-    progress.textContent = formattedTime
-}
-
-const pauseButton = document.querySelector('#pause')
-pauseButton.onclick = () => {
-    if (record.isPaused()) {
-        record.resumeRecording()
-        pauseButton.textContent = TRAN_PAUSE
-        return
-    }
-
-    record.pauseRecording()
-    pauseButton.textContent = TRAN_RESUME
-}
-
-
-const recButton = document.querySelector('#record')
-
-recButton.onclick = () => {
-    if (record.isRecording() || record.isPaused()) {
-        record.stopRecording()
-        recButton.textContent = TRAN_RECORD
-        pauseButton.style.display = 'none'
-        return
-    }
-
-    recButton.disabled = true
-    record.startRecording(record.startMic()).then(() => {
-        recButton.textContent = TRAN_STOP
-        recButton.disabled = false
-        pauseButton.style.display = 'inline'
-    })
-}
-
-let choices = document.querySelectorAll(".choices")
-let initChoice
-for (let i = 0; i < choices.length; i++) {
-    if (choices[i].classList.contains("multiple-remove")) {
-        initChoice = new Choices(choices[i], {
-            delimiter: ",",
-            editItems: true,
-            maxItemCount: -1,
-            removeItemButton: true,
-        })
-    } else {
-        initChoice = new Choices(choices[i], {
-            noResultsText: TRAN_SELECTNORESULTS,
-            noChoicesText: TRAN_SELECTNOOPTIONS,
-            itemSelectText: TRAN_SELECTPRESSSELECT,
-        })
-    }
-}
-
-function recordvoice(i, o, u, z, w) {
-    if (ALLOW_CREATE == 1) {
-        lineid = i;
-        vtgroup = o;
-        cartid = u;
-        logname = z;
-        username = w;
-        createWaveSurfer()
-        $("#record_voice").modal("show");
-    } else {
-        Swal.fire({
-            text: TRAN_NORIGHTS,
-            icon: "error",
-            buttonsStyling: false,
-            confirmButtonText: TRAN_OK,
-            customClass: {
-                confirmButton: "btn fw-bold btn-primary"
-            }
-        });
-    }
-}
-
-function uploadvoice(i, o, u, z, w) {
-    if (ALLOW_CREATE == 1) {
-        lineid = i;
-        vtgroup = o;
-        cartid = u;
-        logname = z;
-        username = w;
-        $("#upload_voice").modal("show");
-    } else {
-        Swal.fire({
-            text: TRAN_NORIGHTS,
-            icon: "error",
-            buttonsStyling: false,
-            confirmButtonText: TRAN_OK,
-            customClass: {
-                confirmButton: "btn fw-bold btn-primary"
-            }
-        });
-    }
-}
-
-Dropzone.autoDiscover = false;
-var myDropzone = new Dropzone("#dropzone_upload", {
-    url: HOST_URL + "/forms/voicetrack/chunk-upload.php",
-    parallelUploads: 1,
-    parallelChunkUploads: true,
-    retryChunks: true,
-    retryChunksLimit: 3,
-    forceChunking: true,
-    chunkSize: 1000000,
-    maxFiles: 1,
-    chunking: true,
-    acceptedFiles: ".mp3,.wav",
-    maxFilesize: 500,
-    chunksUploaded: function (file, done) {
-        let currentFile = file;
-        jQuery.ajax({
-            type: "POST",
-            url: HOST_URL + '/forms/voicetrack/chunk-import.php',
-            data: {
-                dzuuid: currentFile.upload.uuid,
-                dztotalchunkcount: currentFile.upload.totalChunkCount,
-                fileName: currentFile.name.substr((currentFile.name.lastIndexOf('.') + 1)),
-                audiochannels: $('#audiochannels').val(),
-                autotrim: $('#autotrim').val(),
-                trimlevel: $('#trimlevel').val(),
-                normalize: $('#normalize').val(),
-                normalizelevel: $('#normalizelevel').val(),
-                musicgroup: vtgroup,
-                logname: logname,
-                cartid: cartid,
-                lineid: lineid
-            },
-            datatype: 'html',
-            success: function (data) {
-                myDropzone.removeFile(file);
-                $.ajax({
-                    type: "POST",
-                    url: HOST_URL + '/forms/voicetrack/rowinfo.php',
-                    data: {
-                        lineid: lineid,
-                        logname: logname
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        $("#cart_" + lineid).html(data['CART_NUMBER']);
-                        $("#artist_" + lineid).html(data['ARTIST']);
-                        $("#title_" + lineid).html(data['TITLE']);
-                        $("#length_" + lineid).html(getTimeFromMillis(data['AVERAGE_LENGTH']));
-                        if (ALLOW_MULTITRACK == '1') {
-                        $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
-                        aria-label="`+ TRAN_VOICETRACKER + `">
-                        <button type="button"
-                            onclick="recordvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="`+ TRAN_RECORD + `"
-                            class="btn btn-danger"><i
-                                class="bi bi-mic"></i></button>
-                        <button type="button"
-                            onclick="uploadvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="`+ TRAN_UPLOAD + `"
-                            class="btn btn-warning"><i
-                                class="bi bi-cloud-upload"></i></button>
-                        <button type="button"
-                                onclick="doMultitrack(`+ lineid + `,'` + logname + `')"
-                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                title="`+ TRAN_MULTITRACKEDITOR + `"
-                                class="btn btn-success"><i
-                                    class="bi bi-music-note-list"></i></button>
-                    </div>`);
-                } else {
-                    $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
-                        aria-label="`+ TRAN_VOICETRACKER + `">
-                        <button type="button"
-                            onclick="recordvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="`+ TRAN_RECORD + `"
-                            class="btn btn-danger"><i
-                                class="bi bi-mic"></i></button>
-                        <button type="button"
-                            onclick="uploadvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="`+ TRAN_UPLOAD + `"
-                            class="btn btn-warning"><i
-                                class="bi bi-cloud-upload"></i></button>
-                    </div>`);
-                }
-                        $("#upload_voice").modal("hide");
-                    }
-                });
-            },
-            error: function (msg) {
-                currentFile.accepted = false;
-                myDropzone._errorProcessing([currentFile], msg.responseText);
-            }
-        });
-
-    },
-});
-
-function getTimeFromMillis(millis) {
-
-    var minutes = '' + Math.floor(millis / 60000);
-    millis = millis % 60000;
-
-    while (minutes.length < 2)
-        minutes = '0' + minutes;
-
-    var seconds = '' + Math.floor(millis / 1000);
-    if (seconds < 0)
-        seconds = seconds * -1;
-
-    while (seconds.length < 2)
-        seconds = '0' + seconds;
-
-    millis = millis % 1000;
-
-    var tenths = Math.floor(millis / 100);
-
-    if (tenths < 0)
-        tenths = tenths * -1;
-
-    return minutes + ':' + seconds + '.' + tenths;
-
-}
-
-function getWavBytes(buffer, options) {
-    const type = options.isFloat ? Float32Array : Uint16Array
-    const numFrames = buffer.byteLength / type.BYTES_PER_ELEMENT
-
-    const headerBytes = getWavHeader(Object.assign({}, options, { numFrames }))
-    const wavBytes = new Uint8Array(headerBytes.length + buffer.byteLength);
-
-    // prepend header, then add pcmBytes
-    wavBytes.set(headerBytes, 0)
-    wavBytes.set(new Uint8Array(buffer), headerBytes.length)
-
-    return wavBytes
-}
-
-function getWavHeader(options) {
-    const numFrames = options.numFrames
-    const numChannels = options.numChannels || 2
-    const sampleRate = options.sampleRate || 44100
-    const bytesPerSample = options.isFloat ? 4 : 2
-    const format = options.isFloat ? 3 : 1
-
-    const blockAlign = numChannels * bytesPerSample
-    const byteRate = sampleRate * blockAlign
-    const dataSize = numFrames * blockAlign
-
-    const buffer = new ArrayBuffer(44)
-    const dv = new DataView(buffer)
-
-    let p = 0
-
-    function writeString(s) {
-        for (let i = 0; i < s.length; i++) {
-            dv.setUint8(p + i, s.charCodeAt(i))
-        }
-        p += s.length
-    }
-
-    function writeUint32(d) {
-        dv.setUint32(p, d, true)
-        p += 4
-    }
-
-    function writeUint16(d) {
-        dv.setUint16(p, d, true)
-        p += 2
-    }
-
-    writeString('RIFF')
-    writeUint32(dataSize + 36)
-    writeString('WAVE')
-    writeString('fmt ')
-    writeUint32(16)
-    writeUint16(format)
-    writeUint16(numChannels)
-    writeUint32(sampleRate)
-    writeUint32(byteRate)
-    writeUint16(blockAlign)
-    writeUint16(bytesPerSample * 8)
-    writeString('data')
-    writeUint32(dataSize)
-
-    return new Uint8Array(buffer)
-}
-
-function convertAudioBufferToBlob(audioBuffer) {
-    var channelData = [],
-        totalLength = 0,
-        channelLength = 0;
-
-    for (var i = 0; i < audioBuffer.numberOfChannels; i++) {
-        channelData.push(audioBuffer.getChannelData(i));
-        totalLength += channelData[i].length;
-        if (i == 0) channelLength = channelData[i].length;
-    }
-
-    const interleaved = new Float32Array(totalLength);
-
-    for (
-        let src = 0, dst = 0;
-        src < channelLength;
-        src++, dst += audioBuffer.numberOfChannels
-    ) {
-        for (var j = 0; j < audioBuffer.numberOfChannels; j++) {
-            interleaved[dst + j] = channelData[j][src];
-        }
-    }
-
-    const wavBytes = getWavBytes(interleaved.buffer, {
-        isFloat: true,
-        numChannels: audioBuffer.numberOfChannels,
-        sampleRate: 48000,
+    $("#multitrack_voice").modal("show");
+    $('#markerbody').preloader({
+        text: TRAN_LOADINGAUDIO,
     });
-    const wav = new Blob([wavBytes], { type: "audio/wav" });
-    return wav;
-}
 
-function convertBlobToAudioBuffer(myBlob, rdline, rdgroup, idnomb) {
-    const audioContext = new AudioContext();
-    const fileReader = new FileReader();
-    $("#"+idnomb).prop("disabled",true);
-
-    fileReader.onloadend = () => {
-
-        let myArrayBuffer = fileReader.result;
-
-        audioContext.decodeAudioData(myArrayBuffer, (audioBuffer) => {
-
-            let blob = convertAudioBufferToBlob(audioBuffer);
-            importToCart(blob, rdline, rdgroup, idnomb)
-        });
-    };
-    fileReader.readAsArrayBuffer(myBlob);
-}
-
-function importToCart(thefile, rdline, rdgroup, idnomb) {
-    var fd = new FormData();
-    fd.append("audio_data", thefile, rdline);
-    fd.append("line", rdline);
-    fd.append("cart", cartid);
-    fd.append("group", rdgroup);
-    fd.append("logname", logname);
-    fd.append("username", username);
-    fd.append("audiochannels", $("#audiochannels_rec").val());
-    fd.append("autotrim", $("#autotrim_rec").val());
-    fd.append("trimlevel", $("#trimlevel_rec").val());
-    fd.append("normalize", $("#normalize_rec").val());
-    fd.append("normalizelevel", $("#normalizelevel_rec").val());
-
-    jQuery.ajax({
+    $.ajax({
         type: "POST",
-        url: HOST_URL + "/forms/voicetrack/importvoicetrack.php",
-        data: fd,
+        url: HOST_URL + '/forms/voicetrack/rowinfo.php',
+        data: {
+            lineid: lineid,
+            logname: logname
+        },
         async: false,
-        success: function () {
-            $("#record_voice").modal("hide");
-            $("#"+idnomb).prop("disabled",false);
-            $("#recordings").empty();
+        dataType: 'json',
+        success: function (data) {
+            roword = data['COUNT'];
+        }
+    });
+
+    if (roword > 0) {
+        totrows = 3;
+        abow = roword - 1;
+        below = roword + 1;
+        begincount = abow;
+    } else {
+        begincount = roword;
+        totrows = 2;
+        below = roword + 1;
+    }
+
+    while (begincount <= below) {
+        var scount
+        var cutname;
+        var dtype;
+        var currsegstartpoint;
+        var currfadeuppoint;
+        var currfadedownpoint;
+        var currsegendpoint;
+        var nexsegstart;
+        var nextcutseguestartpoint;
+        var lineid;
+        var artist;
+        var title;
+        var endpoint;
+        var print;
+        var startpoint;
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: HOST_URL + '/forms/voicetrack/rowinfocount.php',
+            data: {
+                count: begincount,
+                logname: logname
+            },
+            dataType: 'json',
+            success: function (data) {
+                dtype = data['TYPE'];
+                currsegstartpoint = data['SEGUE_START_POINT'];
+                currsegendpoint = data['SEGUE_END_POINT'];
+                currfadeuppoint = data['FADEUP_POINT'];
+                currfadedownpoint = data['FADEDOWN_POINT'];
+                lineid = data['LINE_ID'];
+                artist = data['ARTIST'];
+                title = data['TITLE'];
+                if (dtype == 0) {
+                    cartnomb = data['CART_NUMBER'];
+                    addnext = 1;
+                    totaltracks = totaltracks + 1;
+                } else {
+                    addnext = 0;
+                }
+
+            }
+        });
+        if (addnext == 1) {
+            var dragg = true;
+            var endtime = 0;
+            var starttime;
+            var cutseguestartpoint;
             $.ajax({
-                type: "POST",
-                url: HOST_URL + '/forms/voicetrack/rowinfo.php',
-                data: {
-                    lineid: lineid,
-                    logname: logname
-                },
+                data: "id=" + cartnomb,
+                url: HOST_URL + '/forms/rdcatch/getcut.php',
                 dataType: 'json',
-                success: function (data) {
-                    $("#cart_" + lineid).html(data['CART_NUMBER']);
-                    $("#artist_" + lineid).html(data['ARTIST']);
-                    $("#title_" + lineid).html(data['TITLE']);
-                    $("#length_" + lineid).html(getTimeFromMillis(data['AVERAGE_LENGTH']));
-                    if (ALLOW_MULTITRACK == '1') {
-                    $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
-                        aria-label="`+ TRAN_VOICETRACKER + `">
-                        <button type="button"
-                            onclick="recordvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="`+ TRAN_RECORD + `"
-                            class="btn btn-danger"><i
-                                class="bi bi-mic"></i></button>
-                        <button type="button"
-                            onclick="uploadvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="`+ TRAN_UPLOAD + `"
-                            class="btn btn-warning"><i
-                                class="bi bi-cloud-upload"></i></button>
-                            <button type="button"
-                                onclick="doMultitrack(`+ lineid + `,'` + logname + `')"
-                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                title="`+ TRAN_MULTITRACKEDITOR + `"
-                                class="btn btn-success"><i
-                                    class="bi bi-music-note-list"></i></button>
-                    </div>`);
+                async: false,
+                success: function (dat) {
+                    cutname = dat['CUT_NAME'];
+                    cutseguestartpoint = dat['SEGUE_START_POINT'];
+                    startpoint = dat['START_POINT'];
+                    endpoint = dat['END_POINT'];
+                    endtime = endpoint;
+                    if (artist == '' || artist == null || artist == "undefined") {
+                        print = title;
                     } else {
-                        $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
-                        aria-label="`+ TRAN_VOICETRACKER + `">
-                        <button type="button"
-                            onclick="recordvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="`+ TRAN_RECORD + `"
-                            class="btn btn-danger"><i
-                                class="bi bi-mic"></i></button>
-                        <button type="button"
-                            onclick="uploadvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="`+ TRAN_UPLOAD + `"
-                            class="btn btn-warning"><i
-                                class="bi bi-cloud-upload"></i></button>
-                    </div>`); 
+                        print = title + ' - ' + artist;
+                    }
+                    if (i == 0) {
+                        tra1end = endtime;
+                        tr1lineid = lineid;
+                        dragg = false;
+                        nextstart = endtime;
+                        nexsegstart = currsegstartpoint;
+                        segstartpoint = currsegstartpoint;
+                        nextcutseguestartpoint = cutseguestartpoint;
+                        if (currfadeuppoint > 0 && currfadedownpoint <= 0) {
+                            currfadeuppoint = currfadeuppoint / 1000;
+                            theTracks.push(
+                                {
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
+                                    name: print,
+                                    start: 0,
+                                    states: {
+                                        cursor: true,
+                                        fadein: true,
+                                        fadeout: false,
+                                        select: true,
+                                        shift: dragg,
+                                    },
+                                    fadeIn: {
+                                        shape: "linear",
+                                        duration: currfadeuppoint
+                                    }
+                                });
+                        } else if (currfadeuppoint < 0 && currfadedownpoint > 0) {
+                            var calfadeend = endpoint - currfadedownpoint;
+                            currfadedownpoint = calfadeend / 1000;
+                            theTracks.push(
+                                {
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
+                                    name: print,
+                                    start: 0,
+                                    states: {
+                                        cursor: true,
+                                        fadein: false,
+                                        fadeout: true,
+                                        select: true,
+                                        shift: dragg,
+                                    },
+                                    fadeOut: {
+                                        shape: "linear",
+                                        duration: currfadedownpoint
+                                    }
+                                });
+                        } else if (currfadeuppoint > 0 && currfadedownpoint > 0) {
+                            currfadeuppoint = currfadeuppoint / 1000;
+                            var calfadeend = endpoint - currfadedownpoint;
+                            currfadedownpoint = calfadeend / 1000;
+                            theTracks.push(
+                                {
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
+                                    name: print,
+                                    start: 0,
+                                    states: {
+                                        cursor: true,
+                                        fadein: true,
+                                        fadeout: true,
+                                        select: true,
+                                        shift: dragg,
+                                    },
+                                    fadeIn: {
+                                        shape: "linear",
+                                        duration: currfadeuppoint
+                                    },
+                                    fadeOut: {
+                                        shape: "linear",
+                                        duration: currfadedownpoint
+                                    }
+                                });
+                        } else {
+                            theTracks.push(
+                                {
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
+                                    name: print,
+                                    start: 0,
+                                    states: {
+                                        cursor: true,
+                                        fadein: true,
+                                        fadeout: true,
+                                        select: true,
+                                        shift: dragg,
+                                    },
+                                });
+                        }
+
+                    } else {
+                        if (i == 1) {
+                            tr2lineid = lineid;
+                            tra2end = endtime;
+                        } else {
+                            tra3end = endtime;
+                            tr3lineid = lineid;
+                        }
+                        dragg = true;
+                        if (nexsegstart > 0) {
+                            if (i == 2) {
+                                starttime = nextstart - nexsegstart;
+                                starttime = starttime / 1000;
+                            } else {
+                                starttime = nexsegstart / 1000;
+                                nextstart = nexsegstart + endtime;
+                            }
+
+                        } else {
+                            if (nextcutseguestartpoint > 0) {
+                                starttime = nextcutseguestartpoint / 1000;
+                                nextstart = nextcutseguestartpoint + endtime;
+                            } else {
+                                starttime = nextstart / 1000;
+                                nextstart = nextstart + endtime;
+                            }
+                        }
+                        nexsegstart = currsegstartpoint;
+                        nextcutseguestartpoint = cutseguestartpoint;
+                        if (currfadeuppoint > 0 && currfadedownpoint <= 0) {
+                            currfadeuppoint = currfadeuppoint / 1000;
+                            theTracks.push(
+                                {
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
+                                    name: print,
+                                    start: starttime,
+                                    states: {
+                                        cursor: true,
+                                        fadein: true,
+                                        fadeout: true,
+                                        select: true,
+                                        shift: dragg,
+                                    },
+                                    fadeIn: {
+                                        shape: "linear",
+                                        duration: currfadeuppoint
+                                    }
+                                },
+
+                            );
+                        } else if (currfadeuppoint <= 0 && currfadedownpoint > 0) {
+                            var calfadeend = endpoint - currfadedownpoint;
+                            currfadedownpoint = calfadeend / 1000;
+                            theTracks.push(
+                                {
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
+                                    name: print,
+                                    start: starttime,
+                                    states: {
+                                        cursor: true,
+                                        fadein: true,
+                                        fadeout: true,
+                                        select: true,
+                                        shift: dragg,
+                                    },
+                                    fadeOut: {
+                                        shape: "linear",
+                                        duration: currfadedownpoint
+                                    }
+                                },
+
+                            );
+                        } else if (currfadeuppoint > 0 && currfadedownpoint > 0) {
+                            currfadeuppoint = currfadeuppoint / 1000;
+                            var calfadeend = endpoint - currfadedownpoint;
+                            currfadedownpoint = calfadeend / 1000;
+                            theTracks.push(
+                                {
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
+                                    name: print,
+                                    start: starttime,
+                                    states: {
+                                        cursor: true,
+                                        fadein: true,
+                                        fadeout: true,
+                                        select: true,
+                                        shift: dragg,
+                                    },
+                                    fadeIn: {
+                                        shape: "linear",
+                                        duration: currfadeuppoint
+                                    },
+                                    fadeOut: {
+                                        shape: "linear",
+                                        duration: currfadedownpoint
+                                    }
+                                },
+
+                            );
+                        } else {
+                            theTracks.push(
+                                {
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
+                                    name: print,
+                                    start: starttime,
+                                    states: {
+                                        cursor: true,
+                                        fadein: true,
+                                        fadeout: true,
+                                        select: true,
+                                        shift: dragg,
+                                    }
+                                },
+
+                            );
+                        }
                     }
                 }
             });
+        }
+        i++;
+        begincount = begincount + 1;
 
+    }
 
+    multitrack = WaveformPlaylist.init({
+        samplesPerPixel: 5000,
+        waveHeight: 130,
+        container: document.getElementById("multitrack"),
+        state: 'cursor',
+        colors: {
+            waveOutlineColor: '#707273',
+            timeColor: 'grey',
+            fadeColor: 'black'
         },
-        cache: false,
-        contentType: false,
-        processData: false
+        fadeType: "linear",
+        timescale: true,
+        controls: {
+            show: true, //whether or not to include the track controls
+            width: 200, //width of controls in pixels
+            widgets: {
+                muteOrSolo: false,
+                volume: false,
+                stereoPan: false,
+                collapse: false,
+                remove: false,
+            }
+        },
+        seekStyle: 'line',
+        zoomLevels: [500, 1000, 3000, 5000],
+        isAutomaticScroll: true,
     });
+
+    multitrack.load(theTracks).then(function () {
+        $('#markerbody').preloader('remove');
+    });
+
+    ee = multitrack.getEventEmitter();
+    var $container = $("body");
+
+    function toggleActive(node) {
+        var active = node.parentNode.querySelectorAll('.active');
+        var i = 0, len = active.length;
+
+        for (; i < len; i++) {
+            active[i].classList.remove('active');
+        }
+
+        node.classList.toggle('active');
+    }
+
+    $container.on("click", ".btn-play", function () {
+        ee.emit("play");
+    });
+
+    $container.on("click", ".btn-stop", function () {
+        isLooping = false;
+        ee.emit("stop");
+    });
+
+    $container.on("click", ".btn-pause", function () {
+        isLooping = false;
+        ee.emit("pause");
+    });
+
+    $container.on("click", ".btn-rewind", function () {
+        isLooping = false;
+        ee.emit("rewind");
+    });
+
+    $container.on("click", ".btn-fast-forward", function () {
+        isLooping = false;
+        ee.emit("fastforward");
+    });
+
+    $container.on("click", ".btn-zoom-in", function () {
+        ee.emit("zoomin");
+    });
+
+    $container.on("click", ".btn-zoom-out", function () {
+        ee.emit("zoomout");
+    });
+
+    $container.on("click", ".btn-cursor", function () {
+        ee.emit("statechange", "cursor");
+        toggleActive(this);
+    });
+
+    $container.on("click", ".btn-shift", function () {
+        ee.emit("statechange", "shift");
+        toggleActive(this);
+    });
+
+    $container.on("click", ".btn-fadein", function () {
+        ee.emit("fadetype", "linear");
+        ee.emit("statechange", "fadein");
+        toggleActive(this);
+    });
+
+    $container.on("click", ".btn-fadeout", function () {
+        ee.emit("fadetype", "linear");
+        ee.emit("statechange", "fadeout");
+        toggleActive(this);
+    });
+
 }
 
-const element1 = document.getElementById('upload_voice');
-const modal1 = new bootstrap.Modal(element1);
+function saveTracksData() {
+    var trackdatan = multitrack.getInfo();
+    if (totaltracks == 1) {
+        var track0start = Math.trunc(trackdatan.tracks[0].start * 1000);
+        var track0end = Math.trunc(trackdatan.tracks[0].end * 1000);
+        var track1start = 0;
+        var track1end = 0;
+        var track2start = 0;
+        var track2end = 0;
+        var fadein0 = trackdatan.tracks[0].fadeIn?.duration;
+        if (typeof fadein0 === "undefined") {
+            fadein0 = -1;
+        } else {
+            fadein0 = Math.trunc(trackdatan.tracks[0].fadeIn.duration * 1000);
+            console.log("Track 1 Fadein " + fadein0);
+        }
+        var fadein1 = -1;
+        var fadein2 = -1;
+        var fadeout0 = trackdatan.tracks[0].fadeOut?.duration;
+        if (typeof fadeout0 === "undefined") {
+            fadeout0 = -1;
+        } else {
+            fadeout0 = Math.trunc(trackdatan.tracks[0].fadeOut.duration * 1000);
+            fadeout0 = track0end - fadeout0;
+        }
+        var fadeout1 = -1;
+        var fadeout2 = -1;
+    } else if (totaltracks == 2) {
+        var track0start = Math.trunc(trackdatan.tracks[0].start * 1000);
+        var track0end = Math.trunc(trackdatan.tracks[0].end * 1000);
+        var track1start = Math.trunc(trackdatan.tracks[1].start * 1000);
+        var track1end = Math.trunc(trackdatan.tracks[1].end * 1000);
+        var track2start = 0;
+        var track2end = 0;
+        var fadein0 = trackdatan.tracks[0].fadeIn?.duration;
+        if (typeof fadein0 === "undefined") {
+            fadein0 = -1;
+        } else {
+            fadein0 = Math.trunc(trackdatan.tracks[0].fadeIn.duration * 1000);
+            console.log("Track 1 Fadein " + fadein0);
+        }
+        var fadein1 = trackdatan.tracks[1].fadeIn?.duration;
+        if (typeof fadein1 === "undefined") {
+            fadein1 = -1;
+        } else {
+            fadein1 = Math.trunc(trackdatan.tracks[1].fadeIn.duration * 1000);
+        }
+        var fadein2 = -1;
+        var fadeout0 = trackdatan.tracks[0].fadeOut?.duration;
+        if (typeof fadeout0 === "undefined") {
+            fadeout0 = -1;
+        } else {
+            fadeout0 = Math.trunc(trackdatan.tracks[0].fadeOut.duration * 1000);
+            fadeout0 = track0end - fadeout0;
+        }
+        var fadeout1 = trackdatan.tracks[1].fadeOut?.duration;
+        if (typeof tfadeout1 === "undefined") {
+            fadeout1 = -1;
+        } else {
+            fadeout1 = Math.trunc(trackdatan.tracks[1].fadeOut.duration * 1000);
+            fadeout1 = track1end - fadeout1;
+        }
+        var fadeout2 = -1;
+    } else {
+        var track0start = Math.trunc(trackdatan.tracks[0].start * 1000);
+        var track0end = Math.trunc(trackdatan.tracks[0].end * 1000);
+        var track1start = Math.trunc(trackdatan.tracks[1].start * 1000);
+        var track1end = Math.trunc(trackdatan.tracks[1].end * 1000);
+        var track2start = Math.trunc(trackdatan.tracks[2].start * 1000);
+        var track2end = Math.trunc(trackdatan.tracks[2].end * 1000);
+        var fadein0 = trackdatan.tracks[0].fadeIn?.duration;
+        if (typeof fadein0 === "undefined") {
+            fadein0 = -1;
+        } else {
+            fadein0 = Math.trunc(trackdatan.tracks[0].fadeIn.duration * 1000);
+            console.log("Track 1 Fadein " + fadein0);
+        }
+        var fadein1 = trackdatan.tracks[1].fadeIn?.duration;
+        if (typeof fadein1 === "undefined") {
+            fadein1 = -1;
+        } else {
+            fadein1 = Math.trunc(trackdatan.tracks[1].fadeIn.duration * 1000);
+        }
+        var fadein2 = trackdatan.tracks[2].fadeIn?.duration;
+        if (typeof fadein2 === "undefined") {
+            fadein2 = -1;
+        } else {
+            fadein2 = Math.trunc(trackdatan.tracks[2].fadeIn.duration * 1000);
+        }
+        var fadeout0 = trackdatan.tracks[0].fadeOut?.duration;
+        if (typeof fadeout0 === "undefined") {
+            fadeout0 = -1;
+        } else {
+            fadeout0 = Math.trunc(trackdatan.tracks[0].fadeOut.duration * 1000);
+            fadeout0 = track0end - fadeout0;
+        }
+        var fadeout1 = trackdatan.tracks[1].fadeOut?.duration;
+        if (typeof tfadeout1 === "undefined") {
+            fadeout1 = -1;
+        } else {
+            fadeout1 = Math.trunc(trackdatan.tracks[1].fadeOut.duration * 1000);
+            fadeout1 = track1end - fadeout1;
+        }
+        var fadeout2 = trackdatan.tracks[2].fadeOut?.duration;
+        if (typeof fadeout2 === "undefined") {
+            fadeout2 = -1;
+        } else {
+            fadeout2 = Math.trunc(trackdatan.tracks[2].fadeOut.duration * 1000);
+            fadeout2 = track2end - fadeout2;
+        }
+        if (track2start < track1start) {
+            track2start = track1start;
+        }
+    }
 
-var initUploadVoiceButtons = function () {
-    const cancelButton2 = element1.querySelector('[data-kt-upload-modal-action="cancel"]');
+
+    jQuery.ajax({
+        type: "POST",
+        url: HOST_URL + '/forms/voicetrack/savetracksdata.php',
+        data: {
+            lineid1: tr1lineid,
+            lineid2: tr2lineid,
+            lineid3: tr3lineid,
+            tr1start: track0start,
+            tr2start: track1start,
+            tr3start: track2start,
+            tr1end: track0end,
+            tr2end: track1end,
+            tr3end: track2end,
+            seg1end: tra1end,
+            seg2end: tra2end,
+            seg3end: tra3end,
+            fadein1: fadein0,
+            fadein2: fadein1,
+            fadein3: fadein2,
+            fadeout1: fadeout0,
+            fadeout2: fadeout1,
+            fadeout3: fadeout2,
+            totaltracks: totaltracks,
+            logname: thelog
+        },
+        datatype: 'html',
+        success: function (data) {
+            var mydata = $.parseJSON(data);
+            var fel = mydata.error;
+            var kod = mydata.errorcode;
+            if (fel == "false") {
+                $('#multitrack_voice').modal('hide');
+                ee.emit("clear");
+
+            } else {
+                Swal.fire({
+                    text: TRAN_BUG,
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: TRAN_OK,
+                    customClass: {
+                        confirmButton: "btn btn-primary"
+                    }
+                });
+            }
+        }
+    });
+
+}
+
+const element3 = document.getElementById('multitrack_voice');
+const modal3 = new bootstrap.Modal(element3);
+
+var initMultitrackVoiceButtons = function () {
+    const cancelButton2 = element3.querySelector('[data-kt-multitrack-modal-action="cancel"]');
     cancelButton2.addEventListener('click', e => {
         e.preventDefault();
 
         Swal.fire({
-            text: TRAN_CLOSEUPLOADWINDOWVOICE,
+            text: TRAN_CLOSETHEWINDOW,
             icon: "warning",
             showCancelButton: true,
             buttonsStyling: false,
@@ -536,16 +654,17 @@ var initUploadVoiceButtons = function () {
             }
         }).then(function (result) {
             if (result.value) {
-                modal1.hide();
+                modal3.hide();
+                ee.emit("clear");
             }
         });
     });
-    const closeButton2 = element1.querySelector('[data-kt-upload-modal-action="close"]');
+    const closeButton2 = element3.querySelector('[data-kt-multitrack-modal-action="close"]');
     closeButton2.addEventListener('click', e => {
         e.preventDefault();
 
         Swal.fire({
-            text: TRAN_CLOSEUPLOADWINDOWVOICE,
+            text: TRAN_CLOSETHEWINDOW,
             icon: "warning",
             showCancelButton: true,
             buttonsStyling: false,
@@ -557,63 +676,13 @@ var initUploadVoiceButtons = function () {
             }
         }).then(function (result) {
             if (result.value) {
-                modal1.hide();
+                modal3.hide();
+                ee.emit("clear");
 
             }
         });
     });
 }
 
-const element2 = document.getElementById('record_voice');
-const modal2 = new bootstrap.Modal(element2);
+initMultitrackVoiceButtons();
 
-var initRecordVoiceButtons = function () {
-    const cancelButton2 = element2.querySelector('[data-kt-record-modal-action="cancel"]');
-    cancelButton2.addEventListener('click', e => {
-        e.preventDefault();
-
-        Swal.fire({
-            text: TRAN_CLOSERECORDWINDOWVOICE,
-            icon: "warning",
-            showCancelButton: true,
-            buttonsStyling: false,
-            confirmButtonText: TRAN_YES,
-            cancelButtonText: TRAN_NO,
-            customClass: {
-                confirmButton: "btn btn-primary",
-                cancelButton: "btn btn-active-light"
-            }
-        }).then(function (result) {
-            if (result.value) {
-                modal2.hide();
-                wavesurfer.destroy();
-            }
-        });
-    });
-    const closeButton2 = element2.querySelector('[data-kt-record-modal-action="close"]');
-    closeButton2.addEventListener('click', e => {
-        e.preventDefault();
-
-        Swal.fire({
-            text: TRAN_CLOSERECORDWINDOWVOICE,
-            icon: "warning",
-            showCancelButton: true,
-            buttonsStyling: false,
-            confirmButtonText: TRAN_YES,
-            cancelButtonText: TRAN_NO,
-            customClass: {
-                confirmButton: "btn btn-primary",
-                cancelButton: "btn btn-active-light"
-            }
-        }).then(function (result) {
-            if (result.value) {
-                modal2.hide();
-                wavesurfer.destroy();
-
-            }
-        });
-    });
-}
-
-initUploadVoiceButtons();
-initRecordVoiceButtons();
