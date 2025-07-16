@@ -37,6 +37,7 @@ var tra1end;
 var tra2end;
 var tra3end;
 var thelog;
+var totaltracks = 0;
 
 function doMultitrack(lineid, logname) {
     var tracks;
@@ -51,6 +52,7 @@ function doMultitrack(lineid, logname) {
     var cartnomb;
     var nextstart;
     var segstartpoint;
+    totaltracks = 0;
     var theTracks = Array();
     thelog = logname;
 
@@ -122,6 +124,7 @@ function doMultitrack(lineid, logname) {
                 if (dtype == 0) {
                     cartnomb = data['CART_NUMBER'];
                     addnext = 1;
+                    totaltracks = totaltracks + 1;
                 } else {
                     addnext = 0;
                 }
@@ -161,13 +164,13 @@ function doMultitrack(lineid, logname) {
                             currfadeuppoint = currfadeuppoint / 1000;
                             theTracks.push(
                                 {
-                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' +startpoint+ '&end='+endpoint,
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
                                     name: print,
                                     start: 0,
                                     states: {
                                         cursor: true,
                                         fadein: true,
-                                        fadeout: true,
+                                        fadeout: false,
                                         select: true,
                                         shift: dragg,
                                     },
@@ -181,7 +184,28 @@ function doMultitrack(lineid, logname) {
                             currfadedownpoint = calfadeend / 1000;
                             theTracks.push(
                                 {
-                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' +startpoint+ '&end='+endpoint,
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
+                                    name: print,
+                                    start: 0,
+                                    states: {
+                                        cursor: true,
+                                        fadein: false,
+                                        fadeout: true,
+                                        select: true,
+                                        shift: dragg,
+                                    },
+                                    fadeOut: {
+                                        shape: "linear",
+                                        duration: currfadedownpoint
+                                    }
+                                });
+                        } else if (currfadeuppoint > 0 && currfadedownpoint > 0) {
+                            currfadeuppoint = currfadeuppoint / 1000;
+                            var calfadeend = endpoint - currfadedownpoint;
+                            currfadedownpoint = calfadeend / 1000;
+                            theTracks.push(
+                                {
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
                                     name: print,
                                     start: 0,
                                     states: {
@@ -200,31 +224,10 @@ function doMultitrack(lineid, logname) {
                                         duration: currfadedownpoint
                                     }
                                 });
-                        } else if (currfadeuppoint > 0 && currfadedownpoint > 0) {
-                            currfadeuppoint = currfadeuppoint / 1000;
-                            var calfadeend = endpoint - currfadedownpoint;
-                            currfadedownpoint = calfadeend / 1000;
-                            theTracks.push(
-                                {
-                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' +startpoint+ '&end='+endpoint,
-                                    name: print,
-                                    start: 0,
-                                    states: {
-                                        cursor: true,
-                                        fadein: true,
-                                        fadeout: true,
-                                        select: true,
-                                        shift: dragg,
-                                    },
-                                    fadeOut: {
-                                        shape: "linear",
-                                        duration: currfadedownpoint
-                                    }
-                                });
                         } else {
                             theTracks.push(
                                 {
-                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' +startpoint+ '&end='+endpoint,
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
                                     name: print,
                                     start: 0,
                                     states: {
@@ -270,7 +273,7 @@ function doMultitrack(lineid, logname) {
                             currfadeuppoint = currfadeuppoint / 1000;
                             theTracks.push(
                                 {
-                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' +startpoint+ '&end='+endpoint,
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
                                     name: print,
                                     start: starttime,
                                     states: {
@@ -292,7 +295,7 @@ function doMultitrack(lineid, logname) {
                             currfadedownpoint = calfadeend / 1000;
                             theTracks.push(
                                 {
-                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' +startpoint+ '&end='+endpoint,
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
                                     name: print,
                                     start: starttime,
                                     states: {
@@ -315,7 +318,7 @@ function doMultitrack(lineid, logname) {
                             currfadedownpoint = calfadeend / 1000;
                             theTracks.push(
                                 {
-                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' +startpoint+ '&end='+endpoint,
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
                                     name: print,
                                     start: starttime,
                                     states: {
@@ -339,7 +342,7 @@ function doMultitrack(lineid, logname) {
                         } else {
                             theTracks.push(
                                 {
-                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' +startpoint+ '&end='+endpoint,
+                                    src: HOST_URL + '/forms/voicetrack/export.php?cutname=' + cutname + '&mp3=0&start=' + startpoint + '&end=' + endpoint,
                                     name: print,
                                     start: starttime,
                                     states: {
@@ -356,9 +359,9 @@ function doMultitrack(lineid, logname) {
                     }
                 }
             });
-            i++;
-            begincount = begincount + 1;
         }
+        i++;
+        begincount = begincount + 1;
 
     }
 
@@ -466,60 +469,119 @@ function doMultitrack(lineid, logname) {
 
 function saveTracksData() {
     var trackdatan = multitrack.getInfo();
-    var track0start = Math.trunc(trackdatan.tracks[0].start * 1000);
-    var track0end = Math.trunc(trackdatan.tracks[0].end * 1000);
-    var track1start = Math.trunc(trackdatan.tracks[1].start * 1000);
-    var track1end = Math.trunc(trackdatan.tracks[1].end * 1000);
-    var track2start = Math.trunc(trackdatan.tracks[2].start * 1000);
-    var track2end = Math.trunc(trackdatan.tracks[2].end * 1000);
-    var fadein0 = trackdatan.tracks[0].fadeIn?.duration;
-    if (typeof fadein0 === "undefined") {
-        fadein0 = -1;        
+    if (totaltracks == 1) {
+        var track0start = Math.trunc(trackdatan.tracks[0].start * 1000);
+        var track0end = Math.trunc(trackdatan.tracks[0].end * 1000);
+        var track1start = 0;
+        var track1end = 0;
+        var track2start = 0;
+        var track2end = 0;
+        var fadein0 = trackdatan.tracks[0].fadeIn?.duration;
+        if (typeof fadein0 === "undefined") {
+            fadein0 = -1;
+        } else {
+            fadein0 = Math.trunc(trackdatan.tracks[0].fadeIn.duration * 1000);
+            console.log("Track 1 Fadein " + fadein0);
+        }
+        var fadein1 = -1;
+        var fadein2 = -1;
+        var fadeout0 = trackdatan.tracks[0].fadeOut?.duration;
+        if (typeof fadeout0 === "undefined") {
+            fadeout0 = -1;
+        } else {
+            fadeout0 = Math.trunc(trackdatan.tracks[0].fadeOut.duration * 1000);
+            fadeout0 = track0end - fadeout0;
+        }
+        var fadeout1 = -1;
+        var fadeout2 = -1;
+    } else if (totaltracks == 2) {
+        var track0start = Math.trunc(trackdatan.tracks[0].start * 1000);
+        var track0end = Math.trunc(trackdatan.tracks[0].end * 1000);
+        var track1start = Math.trunc(trackdatan.tracks[1].start * 1000);
+        var track1end = Math.trunc(trackdatan.tracks[1].end * 1000);
+        var track2start = 0;
+        var track2end = 0;
+        var fadein0 = trackdatan.tracks[0].fadeIn?.duration;
+        if (typeof fadein0 === "undefined") {
+            fadein0 = -1;
+        } else {
+            fadein0 = Math.trunc(trackdatan.tracks[0].fadeIn.duration * 1000);
+            console.log("Track 1 Fadein " + fadein0);
+        }
+        var fadein1 = trackdatan.tracks[1].fadeIn?.duration;
+        if (typeof fadein1 === "undefined") {
+            fadein1 = -1;
+        } else {
+            fadein1 = Math.trunc(trackdatan.tracks[1].fadeIn.duration * 1000);
+        }
+        var fadein2 = -1;
+        var fadeout0 = trackdatan.tracks[0].fadeOut?.duration;
+        if (typeof fadeout0 === "undefined") {
+            fadeout0 = -1;
+        } else {
+            fadeout0 = Math.trunc(trackdatan.tracks[0].fadeOut.duration * 1000);
+            fadeout0 = track0end - fadeout0;
+        }
+        var fadeout1 = trackdatan.tracks[1].fadeOut?.duration;
+        if (typeof tfadeout1 === "undefined") {
+            fadeout1 = -1;
+        } else {
+            fadeout1 = Math.trunc(trackdatan.tracks[1].fadeOut.duration * 1000);
+            fadeout1 = track1end - fadeout1;
+        }
+        var fadeout2 = -1;
     } else {
-        fadein0 = Math.trunc(trackdatan.tracks[0].fadeIn.duration * 1000);
-        console.log("Track 1 Fadein " + fadein0);
+        var track0start = Math.trunc(trackdatan.tracks[0].start * 1000);
+        var track0end = Math.trunc(trackdatan.tracks[0].end * 1000);
+        var track1start = Math.trunc(trackdatan.tracks[1].start * 1000);
+        var track1end = Math.trunc(trackdatan.tracks[1].end * 1000);
+        var track2start = Math.trunc(trackdatan.tracks[2].start * 1000);
+        var track2end = Math.trunc(trackdatan.tracks[2].end * 1000);
+        var fadein0 = trackdatan.tracks[0].fadeIn?.duration;
+        if (typeof fadein0 === "undefined") {
+            fadein0 = -1;
+        } else {
+            fadein0 = Math.trunc(trackdatan.tracks[0].fadeIn.duration * 1000);
+            console.log("Track 1 Fadein " + fadein0);
+        }
+        var fadein1 = trackdatan.tracks[1].fadeIn?.duration;
+        if (typeof fadein1 === "undefined") {
+            fadein1 = -1;
+        } else {
+            fadein1 = Math.trunc(trackdatan.tracks[1].fadeIn.duration * 1000);
+        }
+        var fadein2 = trackdatan.tracks[2].fadeIn?.duration;
+        if (typeof fadein2 === "undefined") {
+            fadein2 = -1;
+        } else {
+            fadein2 = Math.trunc(trackdatan.tracks[2].fadeIn.duration * 1000);
+        }
+        var fadeout0 = trackdatan.tracks[0].fadeOut?.duration;
+        if (typeof fadeout0 === "undefined") {
+            fadeout0 = -1;
+        } else {
+            fadeout0 = Math.trunc(trackdatan.tracks[0].fadeOut.duration * 1000);
+            fadeout0 = track0end - fadeout0;
+        }
+        var fadeout1 = trackdatan.tracks[1].fadeOut?.duration;
+        if (typeof tfadeout1 === "undefined") {
+            fadeout1 = -1;
+        } else {
+            fadeout1 = Math.trunc(trackdatan.tracks[1].fadeOut.duration * 1000);
+            fadeout1 = track1end - fadeout1;
+        }
+        var fadeout2 = trackdatan.tracks[2].fadeOut?.duration;
+        if (typeof fadeout2 === "undefined") {
+            fadeout2 = -1;
+        } else {
+            fadeout2 = Math.trunc(trackdatan.tracks[2].fadeOut.duration * 1000);
+            fadeout2 = track2end - fadeout2;
+        }
+        if (track2start < track1start) {
+            track2start = track1start;
+        }
     }
-    var fadein1 = trackdatan.tracks[1].fadeIn?.duration;
-    if (typeof fadein1 === "undefined") {
-        fadein1 = -1;
-    } else {
-        fadein1 = Math.trunc(trackdatan.tracks[1].fadeIn.duration * 1000);
-    }
-    var fadein2 = trackdatan.tracks[2].fadeIn?.duration;
-    if (typeof fadein2 === "undefined") {
-        fadein2 = -1;        
-    } else {
-        fadein2 = Math.trunc(trackdatan.tracks[2].fadeIn.duration * 1000);
-    }
-    var fadeout0 = trackdatan.tracks[0].fadeOut?.duration;
-    if (typeof fadeout0 === "undefined") {
-        fadeout0 = -1;
-    } else {
-        fadeout0 = Math.trunc(trackdatan.tracks[0].fadeOut.duration * 1000);
-        fadeout0 = track0end - fadeout0;        
-    }
-    var fadeout1 = trackdatan.tracks[1].fadeOut?.duration;
-    if (typeof tfadeout1 === "undefined") {
-        fadeout1 = -1;
-    } else {
-        fadeout1 = Math.trunc(trackdatan.tracks[1].fadeOut.duration * 1000);
-        fadeout1 = track1end - fadeout1;
-    }
-    var fadeout2 = trackdatan.tracks[2].fadeOut?.duration;
-    if (typeof fadeout2 === "undefined") {
-        fadeout2 = -1;
-    } else {
-        fadeout2 = Math.trunc(trackdatan.tracks[2].fadeOut.duration * 1000);
-        fadeout2 = track2end - fadeout2;
-    }
-
-    if (track2start < track1start) {
-        track2start = track1start;
-    }
-
-    console.log("Track 1 Start " + track0start + " End " + track0end + " Lineid: " + tr1lineid);
-    console.log("Track 2 Start " + track1start + " End " + track1end + " Lineid: " + tr2lineid);
-    console.log("Track 3 Start " + track2start + " End " + track2end + " Lineid: " + tr3lineid);
+    
 
     jQuery.ajax({
         type: "POST",
@@ -543,6 +605,7 @@ function saveTracksData() {
             fadeout1: fadeout0,
             fadeout2: fadeout1,
             fadeout3: fadeout2,
+            totaltracks: totaltracks,
             logname: thelog
         },
         datatype: 'html',
