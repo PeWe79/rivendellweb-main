@@ -94,7 +94,7 @@ $plugin_js = '<script src="'.DIR.'/assets/extensions/jqueryvalidation/jquery.val
 <script src="'.DIR.'/assets/extensions/flatpickr/flatpickr.min.js"></script>
 <script src="'.DIR.'/assets/extensions/jquery-loading/jquery.loading.min.js"></script>
 <script src="'.DIR.'/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>';
-$page_js = '<script src="'.DIR.'/assets/static/js/settings.js"></script>';
+$page_js = '<script src="'.DIR.'/assets/static/js/settings.js?356532"></script>';
 ?>
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/top.php'; ?>
 

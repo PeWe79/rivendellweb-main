@@ -51,7 +51,7 @@ $('#install_form').validate({
         },
         urladd: {
             required: true,
-            url: true
+            url2: true
         },
         admin_usr: {
             required: true,
@@ -104,7 +104,7 @@ $('#install_form').validate({
         },
         urladd: {
             required: 'This can not be empty!',
-            url: 'You need to enter a correct url!'
+            url2: 'You need to enter a correct url!'
         },
         admin_usr: {
             required: 'This can not be empty!',

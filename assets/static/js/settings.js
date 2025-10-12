@@ -51,7 +51,7 @@ $('#install_form').validate({
         },
         urladd: {
             required: true,
-            url: true
+            url2: true
         },
         admin_usr: {
             required: true,
@@ -100,7 +100,7 @@ $('#install_form').validate({
         },
         urladd: {
             required: TRAN_NOTBEEMPTY,
-            url: TRAN_CORRURLNEEDS
+            url2: TRAN_CORRURLNEEDS
         },
         time_zone: {
             required: TRAN_NOTBEEMPTY,

@@ -450,7 +450,7 @@ $errors = 0;
     <script src="assets/extensions/jqueryvalidation/jquery.validate.min.js"></script>
     <script src="assets/extensions/jqueryvalidation/additional-methods.min.js"></script>
     <script src="assets/compiled/js/app.js"></script>
-    <script src="assets/static/js/installer.js"></script>
+    <script src="assets/static/js/installer.js?4534555"></script>
 
 </body>
 
