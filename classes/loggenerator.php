@@ -47,6 +47,18 @@ class LogGenerator
         return $this->_ignoreCase;
     }
 
+    public function getRandomString($n) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randomString = '';
+    
+        for ($i = 0; $i < $n; $i++) {
+            $index = random_int(0, strlen($characters) - 1);
+            $randomString .= $characters[$index];
+        }
+    
+        return $randomString;
+    }
+
     public function loadPass($username)
     {
         $stmt = $this->_db->prepare('SELECT * FROM USERS WHERE LOGIN_NAME = :name');
@@ -976,9 +988,10 @@ class LogGenerator
             $loggenlog_data = json_decode($json_string, true);
         }
         $datetime = date("Y-m-d H:i:s");
-
-        $loggenlog_data[$logname][$datetime]['INFO'] = $text;
-        $loggenlog_data[$logname][$datetime]['DATE'] = $datetime;
+        $randomid = $this->getRandomString(5);
+        $datetimeid = $datetime."-".$randomid;
+        $loggenlog_data[$logname][$datetimeid]['INFO'] = $text;
+        $loggenlog_data[$logname][$datetimeid]['DATE'] = $datetime;
 
         $jsonData = json_encode($loggenlog_data, JSON_PRETTY_PRINT);
         if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_log.json', $jsonData)) {
