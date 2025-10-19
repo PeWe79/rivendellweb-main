@@ -157,6 +157,66 @@ function showlog(log) {
     dt2.ajax.reload();
 }
 
+$('#settings_form').validate({
+    rules: {
+        logauto: {
+            required: true,
+        },
+        daysgenerate: {
+            required: true,
+            digits: true,
+            min: 1,
+            max: 7
+        },
+        "services[]": {
+            required: true,
+        },
+
+
+    },
+    messages: {
+        logauto: {
+            required: TRAN_SELECTNOOPTIONS
+        },
+        daysgenerate: {
+            required: TRAN_DAYSTOGENERATEENTER,
+            digits: TRAN_DIGITSONESEVEN,
+            min: TRAN_DIGITSONESEVEN,
+            max: TRAN_DIGITSONESEVEN
+        },
+        "services[]": {
+            required: TRAN_SELECTNOOPTIONS
+        },
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+        error.addClass('parsley-error');
+        element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+    },
+    submitHandler: function () {
+        var dataString = $('#settings_form').serialize();
+        jQuery.ajax({
+            type: "POST",
+            url: HOST_URL + '/forms/loggenerator/savesettings.php',
+            data: dataString,
+            success: function (data) {
+                var mydata = $.parseJSON(data);
+                var fel = mydata.error;
+                if (fel == "false") {
+                    $('#settings_log').modal('hide');
+
+                }
+            }
+        });
+    }
+});
+
 $('#add_form').validate({
     rules: {
         date: {
@@ -607,6 +667,55 @@ var KTDatatablesServerSide = function () {
         });
     }
 
+    const element6 = document.getElementById('settings_log');
+    const modal6 = new bootstrap.Modal(element6);
+
+    var initSetLogButtons = function () {
+        const cancelButton3 = element6.querySelector('[data-kt-settings-modal-action="cancel"]');
+        cancelButton3.addEventListener('click', e => {
+            e.preventDefault();
+
+            Swal.fire({
+                text: TRAN_CLOSETHEWINDOW,
+                icon: "warning",
+                showCancelButton: true,
+                buttonsStyling: false,
+                confirmButtonText: TRAN_YES,
+                cancelButtonText: TRAN_NO,
+                customClass: {
+                    confirmButton: "btn btn-primary",
+                    cancelButton: "btn btn-active-light"
+                }
+            }).then(function (result) {
+                if (result.value) {
+                    modal6.hide();
+                }
+            });
+        });
+        const closeButton4 = element6.querySelector('[data-kt-settings-modal-action="close"]');
+        closeButton4.addEventListener('click', e => {
+            e.preventDefault();
+
+            Swal.fire({
+                text: TRAN_CLOSETHEWINDOW,
+                icon: "warning",
+                showCancelButton: true,
+                buttonsStyling: false,
+                confirmButtonText: TRAN_YES,
+                cancelButtonText: TRAN_NO,
+                customClass: {
+                    confirmButton: "btn btn-primary",
+                    cancelButton: "btn btn-active-light"
+                }
+            }).then(function (result) {
+                if (result.value) {
+                    modal6.hide();
+
+                }
+            });
+        });
+    }
+
 
     return {
         init: function () {
@@ -616,6 +725,7 @@ var KTDatatablesServerSide = function () {
             toggleToolbars();
             initLogLogButtons();
             initLogGenButtons();
+            initSetLogButtons();
 
 
         }
@@ -679,3 +789,10 @@ $("#date").flatpickr({
         },
     }
 });
+
+var multipleCancelButton = new Choices(
+    '#services',
+    {
+      removeItemButton: true,
+    }
+  );

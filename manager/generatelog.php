@@ -63,7 +63,7 @@ $plugin_js = '<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js
 <script src="' . DIR . '/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
 <script src="' . DIR . '/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
 <script src="' . DIR . '/assets/static/js/pages/datatables.js"></script>';
-$page_js = '<script src="' . DIR . '/assets/static/js/generatelog.js"></script>';
+$page_js = '<script src="' . DIR . '/assets/static/js/generatelog.js?45439"></script>';
 ?>
 
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/top.php'; ?>
@@ -122,6 +122,9 @@ $page_js = '<script src="' . DIR . '/assets/static/js/generatelog.js"></script>'
                     </button>
                 </div>
                 <div data-kt-genlog-table-toolbar="base">
+                    <button data-bs-toggle="modal" data-bs-target="#settings_log" class="btn btn-light-info">
+                        <?= $ml->tr('SETTINGS'); ?>
+                    </button>
                     <button data-bs-toggle="modal" data-bs-target="#generate_log" class="btn btn-light-warning">
                         <?= $ml->tr('GENERATELOG'); ?>
                     </button>
@@ -163,7 +166,7 @@ $page_js = '<script src="' . DIR . '/assets/static/js/generatelog.js"></script>'
         </div>
 
     </section>
-    
+
     <div class="modal fade text-left" id="generate_log" data-bs-backdrop="static" role="dialog"
         aria-labelledby="ClockAddLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -225,6 +228,87 @@ $page_js = '<script src="' . DIR . '/assets/static/js/generatelog.js"></script>'
         </div>
     </div>
 
+
+    <div class="modal fade text-left" id="settings_log" data-bs-backdrop="static" role="dialog"
+        aria-labelledby="settingsLogLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h4 class="modal-title white" id="settingsLogLabel">
+                        <?= $ml->tr('SETTINGS') ?>
+                    </h4>
+                    <button type="button" class="close" data-kt-settings-modal-action="cancel" aria-label="Close">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+                <form class="form form-horizontal" id="settings_form" action="loggenerator.php">
+                    <div class="modal-body">
+                        <div class="form-body">
+                            <P>
+                                <?= $ml->tr('LOGGENSETTINFO') ?>
+                            </P>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="logauto">
+                                        <?= $ml->tr('AUTOGENERATELOG') ?>
+                                    </label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <select id="logauto" name="logauto" class="choices form-select">
+                                        <option value="1" <?php if ($loggen_data['sys']['AUTOGEN'] == 1) { ?> selected
+                                            <?php } ?>>
+                                            <?= $ml->tr('YES') ?>
+                                        </option>
+                                        <option value="0" <?php if ($loggen_data['sys']['AUTOGEN'] == 0) { ?> selected
+                                            <?php } ?>>
+                                            <?= $ml->tr('NO') ?>
+                                        </option>
+
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="daysgenerate">
+                                        <?= $ml->tr('DAYSTOGENERATE') ?>
+                                    </label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <input type="text" id="daysgenerate" class="form-control" name="daysgenerate"
+                                        value="<?php echo $loggen_data['sys']['DAYSGEN']; ?>">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="services">
+                                        <?= $ml->tr('SERVICES') ?>
+                                    </label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <select id="services" name="services[]" class="choices form-select" multiple>
+                                        <?php foreach ($serviceNames as $name) { ?>
+
+                                            <option value="<?php echo $name; ?>" <?php if ($loggen_data['sys']['GENSERVICE'][$name]['SERVNAME'] == $name) {
+                                                   echo "SELECTED";
+                                               } ?>>
+                                                <?php echo $name; ?>
+                                            </option>
+
+                                            <?php
+                                        }
+                                        ?>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light-secondary" data-kt-settings-modal-action="close">
+                            <?= $ml->tr('CLOSE') ?>
+                        </button>
+                        <input type="submit" class="btn btn-danger ms-1" value="<?= $ml->tr('SAVE') ?>">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
     <div class="modal fade text-left" id="log_logs" data-bs-backdrop="static" role="dialog"

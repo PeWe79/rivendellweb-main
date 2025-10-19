@@ -47,15 +47,16 @@ class LogGenerator
         return $this->_ignoreCase;
     }
 
-    public function getRandomString($n) {
+    public function getRandomString($n)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randomString = '';
-    
+
         for ($i = 0; $i < $n; $i++) {
             $index = random_int(0, strlen($characters) - 1);
             $randomString .= $characters[$index];
         }
-    
+
         return $randomString;
     }
 
@@ -319,8 +320,10 @@ class LogGenerator
             $lineid = 0;
             $stmt = $this->_db->prepare('SELECT START_TIME, EVENT_LENGTH FROM LOG_LINES WHERE LOG_NAME = :name AND LINE_ID = :lineid');
 
-            $stmt->execute(['name' => $logname,
-            'lineid' => $lineid]);
+            $stmt->execute([
+                'name' => $logname,
+                'lineid' => $lineid
+            ]);
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -329,8 +332,10 @@ class LogGenerator
             $lineid = $this->getCurrentCount($logname) - 1;
             $stmt = $this->_db->prepare('SELECT START_TIME, EVENT_LENGTH FROM LOG_LINES WHERE LOG_NAME = :name AND LINE_ID = :lineid');
 
-            $stmt->execute(['name' => $logname,
-            'lineid' => $lineid]);
+            $stmt->execute([
+                'name' => $logname,
+                'lineid' => $lineid
+            ]);
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -343,7 +348,7 @@ class LogGenerator
                 return $row['START_TIME'] + $row['EVENT_LENGTH'];
             }
 
-            
+
         }
 
 
@@ -486,14 +491,14 @@ class LogGenerator
                 //Loop thru and find titles
                 if ($titlesmall == $titsepo['TITLE']) {
                     $notadd = $notadd + 1;
-                    $this->addToLog("Broken rule title separation for cart: ".$row['NUMBER'], $log);
+                    $this->addToLog("Broken rule title separation for cart: " . $row['NUMBER'], $log);
                 }
             }
             foreach ($artistseparation as $artsepo) {
                 //Loop thru and find titles
                 if ($artistsmall == $artsepo['ARTIST']) {
                     $notadd = $notadd + 1;
-                    $this->addToLog("Broken rule artist separation for cart: ".$row['NUMBER'], $log);
+                    $this->addToLog("Broken rule artist separation for cart: " . $row['NUMBER'], $log);
                 }
             }
             //Check Clock Rules
@@ -504,7 +509,7 @@ class LogGenerator
                 if ($this->checkSequence($maxrowcarts)) {
                     //Return true, we can not add 
                     $notadd = $notadd + 1;
-                    $this->addToLog("Broken rule to many in row for cart: ".$row['NUMBER'], $log);
+                    $this->addToLog("Broken rule to many in row for cart: " . $row['NUMBER'], $log);
                 } else {
                     $okadd = $okadd + 1;
                 }
@@ -519,7 +524,7 @@ class LogGenerator
                 if ($this->checkSequence($minrowcarts)) {
                     //Return true, we can not add
                     $notadd = $notadd + 1;
-                    $this->addToLog("Broken rule min wait for cart: ".$row['NUMBER'], $log);
+                    $this->addToLog("Broken rule min wait for cart: " . $row['NUMBER'], $log);
                 } else {
                     $okadd = $okadd + 1;
                 }
@@ -531,7 +536,7 @@ class LogGenerator
                 if (!empty($this->getNotAfter($laststackid, $service, $clockrules[$row['SCHED_CODE']]['NOT_AFTER']))) {
                     //Not after is before, we can not add this remove from cart array
                     $notadd = $notadd + 1;
-                    $this->addToLog("Broken rule not after for cart: ".$row['NUMBER'], $log);
+                    $this->addToLog("Broken rule not after for cart: " . $row['NUMBER'], $log);
                 } else {
                     $okadd = $okadd + 1;
                 }
@@ -543,7 +548,7 @@ class LogGenerator
                 if (!empty($this->getNotAfter($laststackid, $service, $clockrules[$row['SCHED_CODE']]['OR_AFTER']))) {
                     //Or after is before, we can not add this remove from cart array
                     $notadd = $notadd + 1;
-                    $this->addToLog("Broken rule or after for cart: ".$row['NUMBER'], $log);
+                    $this->addToLog("Broken rule or after for cart: " . $row['NUMBER'], $log);
                 } else {
                     $okadd = $okadd + 1;
                 }
@@ -555,7 +560,7 @@ class LogGenerator
                 if (!empty($this->getNotAfter($laststackid, $service, $clockrules[$row['SCHED_CODE']]['OR_AFTER_II']))) {
                     //Or after is before, we can not add this remove from cart array
                     $notadd = $notadd + 1;
-                    $this->addToLog("Broken rule or after two for cart: ".$row['NUMBER'], $log);
+                    $this->addToLog("Broken rule or after two for cart: " . $row['NUMBER'], $log);
                 } else {
                     $okadd = $okadd + 1;
                 }
@@ -989,7 +994,7 @@ class LogGenerator
         }
         $datetime = date("Y-m-d H:i:s");
         $randomid = $this->getRandomString(5);
-        $datetimeid = $datetime."-".$randomid;
+        $datetimeid = $datetime . "-" . $randomid;
         $loggenlog_data[$logname][$datetimeid]['INFO'] = $text;
         $loggenlog_data[$logname][$datetimeid]['DATE'] = $datetime;
 
@@ -1000,6 +1005,62 @@ class LogGenerator
             return true;
         }
 
+    }
+
+    public function getDateInFuture($startdate, $days)
+    {
+        $date = new DateTime($startdate);
+        $futureDate = $date->modify("+$days days")->format('Y-m-d');
+        return $futureDate;
+    }
+
+    public function getDatesBetween($startDate, $endDate) {
+        $dates = [];
+        $currentDate = strtotime($startDate);
+        $endDate = strtotime($endDate);
+    
+        while ($currentDate <= $endDate) {
+            $dates[] = date('Y-m-d', $currentDate);
+            $currentDate = strtotime('+1 day', $currentDate);
+        }
+    
+        return $dates;
+    }
+
+    public function saveGenSettings($auto, $days, $services, $removeservices)
+    {
+        if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json')) {
+            $generatelog_data = array();
+        } else {
+            $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json';
+            $json_string = file_get_contents($filepath);
+            $generatelog_data = json_decode($json_string, true);
+            $generatelog_data['sys']['AUTOGEN'] = $auto;
+            $generatelog_data['sys']['DAYSGEN'] = $days;
+            $nextday = 1;
+            foreach ($removeservices as $remserv) {
+                unset($generatelog_data['sys']['GENSERVICE'][$remserv]);
+            }
+            
+            foreach ($services as $value) {
+                $generatelog_data['sys']['GENSERVICE'][$value]['SERVNAME'] = $value;
+                if (!isset($generatelog_data['sys']['GENSERVICE'][$value]['LASTLOG'])) {
+                    $startDate = date("Y-m-d");
+                    $futureDate = $this->getDateInFuture($startDate, $nextday);
+                    $generatelog_data['sys']['GENSERVICE'][$value]['LASTLOG'] = $futureDate;
+                }
+            }
+
+            if ($auto == 0) {
+                unset($generatelog_data['sys']['GENSERVICE']);
+            }
+            $jsonData = json_encode($generatelog_data, JSON_PRETTY_PRINT);
+            if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json', $jsonData)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 
 }

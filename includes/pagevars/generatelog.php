@@ -13,8 +13,10 @@
     var TRAN_REGENERATETHELOGNOTPOSSIBLE = "<?= $ml->tr('REGENERATETHELOGNOTPOSSIBLE') ?>";
     var TRAN_REMLOGGENDATA = "<?= $ml->tr('REMLOGGENDATA') ?>";
     var TRAN_REMOVEMARKEDLOGGEN = "<?= $ml->tr('REMOVEMARKEDLOGGEN') ?>";
-
+    var TRAN_SELECTNOOPTIONS = "<?= $ml->tr('NOOPTIONSSELECT') ?>";
     var TRAN_SELECTDATENEED = "<?= $ml->tr('SELECTDATENEED') ?>";
+    var TRAN_DAYSTOGENERATEENTER = "<?= $ml->tr('DAYSTOGENERATEENTER') ?>";
+    var TRAN_DIGITSONESEVEN = "<?= $ml->tr('DIGITSONESEVEN') ?>";
     var TRAN_SELECTDATELOGEXIST = "<?= $ml->tr('SELECTDATELOGEXIST') ?>";
     var TRAN_LOGADDEDTOQUE = "<?= $ml->tr('LOGADDEDTOQUE') ?>";
     var TRAN_YES = "<?= $ml->tr('YES') ?>";
