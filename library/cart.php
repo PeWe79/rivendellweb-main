@@ -28,7 +28,7 @@
  *********************************************************************************************************/
 require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 if (!$user->is_logged_in()) {
-    header('Location: '.DIR.'/login');
+    header('Location: ' . DIR . '/login');
     exit();
 }
 
@@ -41,34 +41,34 @@ $id = $_GET['id'];
 $pagecode = "library";
 $page_vars = 'cart';
 $page_title = $ml->tr('CART');
-$page_css = '<link rel="stylesheet" href="'.DIR.'/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
+$page_css = '<link rel="stylesheet" href="' . DIR . '/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
-<link rel="stylesheet" href="'.DIR.'/assets/extensions/sweetalert2/sweetalert2.min.css">
-<link rel="stylesheet" href="'.DIR.'/assets/extensions/flatpickr/flatpickr.min.css">
-<link rel="stylesheet" href="'.DIR.'/assets/extensions/choices.js/public/assets/styles/choices.css">
-<link rel="stylesheet" href="'.DIR.'/assets/extensions/jquerypreload/preloader.css">
-<link rel="stylesheet" href="'.DIR.'/assets/compiled/css/table-datatable-jquery.css">';
+<link rel="stylesheet" href="' . DIR . '/assets/extensions/sweetalert2/sweetalert2.min.css">
+<link rel="stylesheet" href="' . DIR . '/assets/extensions/flatpickr/flatpickr.min.css">
+<link rel="stylesheet" href="' . DIR . '/assets/extensions/choices.js/public/assets/styles/choices.css">
+<link rel="stylesheet" href="' . DIR . '/assets/extensions/jquerypreload/preloader.css">
+<link rel="stylesheet" href="' . DIR . '/assets/compiled/css/table-datatable-jquery.css">';
 $plugin_js = '<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
-<script src="'.DIR.'/assets/extensions/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="'.DIR.'/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="' . DIR . '/assets/extensions/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="' . DIR . '/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
-<script src="'.DIR.'/assets/extensions/jqueryvalidation/jquery.validate.min.js"></script>
-<script src="'.DIR.'/assets/extensions/jqueryvalidation/additional-methods.min.js"></script>
-<script src="'.DIR.'/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
-<script src="'.DIR.'/assets/extensions/flatpickr/flatpickr.min.js"></script>
-<script src="'.DIR.'/assets/extensions/jquery-loading/jquery.loading.min.js"></script>
-<script src="'.DIR.'/assets/extensions/jquerypreload/jquery.preloader.min.js"></script>
+<script src="' . DIR . '/assets/extensions/jqueryvalidation/jquery.validate.min.js"></script>
+<script src="' . DIR . '/assets/extensions/jqueryvalidation/additional-methods.min.js"></script>
+<script src="' . DIR . '/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
+<script src="' . DIR . '/assets/extensions/flatpickr/flatpickr.min.js"></script>
+<script src="' . DIR . '/assets/extensions/jquery-loading/jquery.loading.min.js"></script>
+<script src="' . DIR . '/assets/extensions/jquerypreload/jquery.preloader.min.js"></script>
 <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
 <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/record.min.js"></script>
 <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
 <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.min.js"></script>
-<script src="'.DIR.'/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>';
-$page_js = '<script src="'.DIR.'/assets/static/js/cart.js"></script>';
+<script src="' . DIR . '/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>';
+$page_js = '<script src="' . DIR . '/assets/static/js/cart.js?43431"></script>';
 
 
 if (!$info->checkMacroNormal($id, 1)) {
-    header('Location: '.DIR.'/library/carts/cart/macro/'.$_GET['id']);
+    header('Location: ' . DIR . '/library/carts/cart/macro/' . $_GET['id']);
     exit();
 }
 
@@ -365,18 +365,18 @@ if (!$info->checkMacroNormal($id, 1)) {
                                     <?= $ml->tr('SCHEDULECUTS') ?>
                                 </label>
                                 <select id="schedcuts" name="schedcuts" class="choices form-select">
-                                            <option value="Y" <?php if ($info->getCartInfo($_GET["id"], "USE_WEIGHTING") == 'Y') {
-                                                echo "SELECTED";
-                                            } ?>>
-                                                <?= $ml->tr('SCHEDULECUTSW') ?>
-                                            </option>
-                                            <option value="N" <?php if ($info->getCartInfo($_GET["id"], "USE_WEIGHTING") == "N") {
-                                                echo "SELECTED";
-                                            } ?>>
-                                                <?= $ml->tr('SCHEDULECUTSO') ?>
-                                            </option>
+                                    <option value="Y" <?php if ($info->getCartInfo($_GET["id"], "USE_WEIGHTING") == 'Y') {
+                                        echo "SELECTED";
+                                    } ?>>
+                                        <?= $ml->tr('SCHEDULECUTSW') ?>
+                                    </option>
+                                    <option value="N" <?php if ($info->getCartInfo($_GET["id"], "USE_WEIGHTING") == "N") {
+                                        echo "SELECTED";
+                                    } ?>>
+                                        <?= $ml->tr('SCHEDULECUTSO') ?>
+                                    </option>
 
-                                        </select>
+                                </select>
                             </div>
                             <div class="form-group my-2">
                                 <label for="notes" class="form-label">
@@ -484,6 +484,78 @@ if (!$info->checkMacroNormal($id, 1)) {
             </div>
         </div>
     </section>
+
+    <div class="modal fade text-left" id="copy_modal" data-bs-backdrop="static" role="dialog"
+        aria-labelledby="copyLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-secondary">
+                    <h4 class="modal-title white" id="copyLabel">
+                        <?= $ml->tr('COPIEDCUTS') ?>
+                    </h4>
+                    <button type="button" class="close" data-kt-copy-modal-action="cancel" aria-label="Close">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body" id="copyloading">
+                    <div class="row">
+                        <div class="col-12 col-md-8 offset-md-4 form-group">
+                            <div class='form-check'>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="autotrimcopy" name="autotrim" class='form-check-input'
+                                        checked>
+                                    <label for="autotrim">
+                                        <?= $ml->tr('AUTOTRIM') ?>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="trimlevel">
+                                <?= $ml->tr('AUTOTRIMLEVEL') ?>
+                            </label>
+                        </div>
+                        <div class="col-md-8 form-group">
+                            <input type="number" id="trimlevelcopy" min="-99" max="0" class="form-control" name="trimlevel"
+                                value="<?php echo AUTOTRIM ?>">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table table-lg" id="coplib_table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <?= $ml->tr('NAME') ?>
+                                        </th>
+                                        <th>
+                                            <?= $ml->tr('LENGTH') ?>
+                                        </th>
+                                        <th>
+                                            <?= $ml->tr('FROMCARTCUT') ?>
+                                        </th>
+                                        <th>
+                                            <?= $ml->tr('ACTION') ?>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-secondary" data-kt-copy-modal-action="close">
+                        <?= $ml->tr('CLOSE') ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade text-left" id="record_voice" data-bs-backdrop="static" role="dialog"
         aria-labelledby="recordLabel" aria-hidden="true">
@@ -1133,8 +1205,8 @@ if (!$info->checkMacroNormal($id, 1)) {
                         <button type="button" class="btn btn-light-secondary" data-kt-editmarker-modal-action="close">
                             <?= $ml->tr('CLOSE') ?>
                         </button>
-                        <button type="button" class="btn btn-info ms-1" data-kt-editmarker-modal-action="submit">                            
-                                <?= $ml->tr('SAVEMARKERS') ?>
+                        <button type="button" class="btn btn-info ms-1" data-kt-editmarker-modal-action="submit">
+                            <?= $ml->tr('SAVEMARKERS') ?>
                         </button>
                     </div>
                 </form>

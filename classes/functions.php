@@ -991,5 +991,109 @@ class Functions
 
     }
 
+    public function getCutInfo($cut, $type)
+        {
+                $stmt = $this->_db->prepare('SELECT * FROM CUTS WHERE CUT_NAME = :number');
+
+                $stmt->execute(['number' => $cut]);
+
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                return $row[$type];
+        }
+
+    public function removeCopyCut($cutname) {
+        if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json')) {
+            $copy_data = array();
+        } else {
+            $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/copy.json';
+            $json_string = file_get_contents($filepath);
+            $copy_data = json_decode($json_string, true);
+        }
+        unset($copy_data['CUTS'][$cutname]);
+        $jsonData = json_encode($copy_data, JSON_PRETTY_PRINT);
+        if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function isOlderThanOneHour($dateTimeString) {
+        $dateTime = new DateTime($dateTimeString);
+        $currentTime = new DateTime();
+        
+        $interval = $currentTime->diff($dateTime);
+        
+        return $interval->h > 1;
+    }
+
+    public function copyCut($cutname, $cart)
+    {
+        if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json')) {
+            $copy_data = array();
+        } else {
+            $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/copy.json';
+            $json_string = file_get_contents($filepath);
+            $copy_data = json_decode($json_string, true);
+        }
+        $copy_data['CUTS'][$cutname]['CUTNAME'] = $cutname;
+        $copy_data['CUTS'][$cutname]['CART'] = $cart;
+        $copy_data['CUTS'][$cutname]['ADDED'] = date("Y-m-d H:i:s");;
+        $copy_data['CUTS'][$cutname]['EVERGREEN'] = $this->getCutInfo($cutname, 'EVERGREEN');
+        $copy_data['CUTS'][$cutname]['DESCRIPTION'] = $this->getCutInfo($cutname, 'DESCRIPTION');
+        $copy_data['CUTS'][$cutname]['OUTCUE'] = $this->getCutInfo($cutname, 'OUTCUE');
+        $copy_data['CUTS'][$cutname]['ISRC'] = $this->getCutInfo($cutname, 'ISRC');
+        $copy_data['CUTS'][$cutname]['ISCI'] = $this->getCutInfo($cutname, 'ISCI');
+        $copy_data['CUTS'][$cutname]['RECORDING_MBID'] = $this->getCutInfo($cutname, 'RECORDING_MBID');
+        $copy_data['CUTS'][$cutname]['RELEASE_MBID'] = $this->getCutInfo($cutname, 'RELEASE_MBID');
+        $copy_data['CUTS'][$cutname]['LENGTH'] = $this->getCutInfo($cutname, 'LENGTH');
+        $copy_data['CUTS'][$cutname]['SHA1_HASH'] = $this->getCutInfo($cutname, 'SHA1_HASH');
+        $copy_data['CUTS'][$cutname]['ORIGIN_DATETIME'] = $this->getCutInfo($cutname, 'ORIGIN_DATETIME');
+        $copy_data['CUTS'][$cutname]['START_DATETIME'] = $this->getCutInfo($cutname, 'START_DATETIME');
+        $copy_data['CUTS'][$cutname]['END_DATETIME'] = $this->getCutInfo($cutname, 'END_DATETIME');
+        $copy_data['CUTS'][$cutname]['SUN'] = $this->getCutInfo($cutname, 'SUN');
+        $copy_data['CUTS'][$cutname]['MON'] = $this->getCutInfo($cutname, 'MON');
+        $copy_data['CUTS'][$cutname]['TUE'] = $this->getCutInfo($cutname, 'TUE');
+        $copy_data['CUTS'][$cutname]['WED'] = $this->getCutInfo($cutname, 'WED');
+        $copy_data['CUTS'][$cutname]['THU'] = $this->getCutInfo($cutname, 'THU');
+        $copy_data['CUTS'][$cutname]['FRI'] = $this->getCutInfo($cutname, 'FRI');
+        $copy_data['CUTS'][$cutname]['SAT'] = $this->getCutInfo($cutname, 'SAT');
+        $copy_data['CUTS'][$cutname]['START_DAYPART'] = $this->getCutInfo($cutname, 'START_DAYPART');
+        $copy_data['CUTS'][$cutname]['END_DAYPART'] = $this->getCutInfo($cutname, 'END_DAYPART');
+        $copy_data['CUTS'][$cutname]['ORIGIN_NAME'] = $this->getCutInfo($cutname, 'ORIGIN_NAME');
+        $copy_data['CUTS'][$cutname]['ORIGIN_LOGIN_NAME'] = $this->getCutInfo($cutname, 'ORIGIN_LOGIN_NAME');
+        $copy_data['CUTS'][$cutname]['SOURCE_HOSTNAME'] = $this->getCutInfo($cutname, 'SOURCE_HOSTNAME');
+        $copy_data['CUTS'][$cutname]['WEIGHT'] = $this->getCutInfo($cutname, 'WEIGHT');
+        $copy_data['CUTS'][$cutname]['PLAY_ORDER'] = $this->getCutInfo($cutname, 'PLAY_ORDER');
+        $copy_data['CUTS'][$cutname]['LAST_PLAY_DATETIME'] = $this->getCutInfo($cutname, 'LAST_PLAY_DATETIME');
+        $copy_data['CUTS'][$cutname]['UPLOAD_DATETIME'] = $this->getCutInfo($cutname, 'UPLOAD_DATETIME');
+        $copy_data['CUTS'][$cutname]['PLAY_COUNTER'] = $this->getCutInfo($cutname, 'PLAY_COUNTER');
+        $copy_data['CUTS'][$cutname]['LOCAL_COUNTER'] = $this->getCutInfo($cutname, 'LOCAL_COUNTER');
+        $copy_data['CUTS'][$cutname]['VALIDITY'] = $this->getCutInfo($cutname, 'VALIDITY');
+        $copy_data['CUTS'][$cutname]['CODING_FORMAT'] = $this->getCutInfo($cutname, 'CODING_FORMAT');
+        $copy_data['CUTS'][$cutname]['SAMPLE_RATE'] = $this->getCutInfo($cutname, 'SAMPLE_RATE');
+        $copy_data['CUTS'][$cutname]['BIT_RATE'] = $this->getCutInfo($cutname, 'BIT_RATE');
+        $copy_data['CUTS'][$cutname]['CHANNELS'] = $this->getCutInfo($cutname, 'CHANNELS');
+        $copy_data['CUTS'][$cutname]['PLAY_GAIN'] = $this->getCutInfo($cutname, 'PLAY_GAIN');
+        $copy_data['CUTS'][$cutname]['START_POINT'] = $this->getCutInfo($cutname, 'START_POINT');
+        $copy_data['CUTS'][$cutname]['END_POINT'] = $this->getCutInfo($cutname, 'END_POINT');
+        $copy_data['CUTS'][$cutname]['FADEUP_POINT'] = $this->getCutInfo($cutname, 'FADEUP_POINT');
+        $copy_data['CUTS'][$cutname]['FADEDOWN_POINT'] = $this->getCutInfo($cutname, 'FADEDOWN_POINT');
+        $copy_data['CUTS'][$cutname]['SEGUE_START_POINT'] = $this->getCutInfo($cutname, 'SEGUE_START_POINT');
+        $copy_data['CUTS'][$cutname]['SEGUE_END_POINT'] = $this->getCutInfo($cutname, 'SEGUE_END_POINT');
+        $copy_data['CUTS'][$cutname]['SEGUE_GAIN'] = $this->getCutInfo($cutname, 'SEGUE_GAIN');
+        $copy_data['CUTS'][$cutname]['HOOK_START_POINT'] = $this->getCutInfo($cutname, 'HOOK_START_POINT');
+        $copy_data['CUTS'][$cutname]['HOOK_END_POINT'] = $this->getCutInfo($cutname, 'HOOK_END_POINT');
+        $copy_data['CUTS'][$cutname]['TALK_START_POINT'] = $this->getCutInfo($cutname, 'TALK_START_POINT');
+        $copy_data['CUTS'][$cutname]['TALK_END_POINT'] = $this->getCutInfo($cutname, 'TALK_END_POINT');
+        $jsonData = json_encode($copy_data, JSON_PRETTY_PRINT);
+        if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
 }

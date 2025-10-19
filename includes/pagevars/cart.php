@@ -47,6 +47,10 @@
     var TRAN_CUTSTART = "<?= $ml->tr('CUTSTART') ?>";
     var TRAN_CUTEND = "<?= $ml->tr('CUTEND') ?>";
     var TRAN_NORIGHTS = "<?= $ml->tr('NORIGHTS') ?>";
+    var TRAN_COPYCUT = "<?= $ml->tr('COPYCUT') ?>";
+    var TRAN_COPYCUTSUCCESS = "<?= $ml->tr('COPYCUTSUCCESS') ?>";
+    var TRAN_PASTECUT = "<?= $ml->tr('PASTECUT') ?>";
+    var TRAN_REMCOPIEDCUT = "<?= $ml->tr('REMCOPIEDCUT') ?>";
     var TRAN_YES = "<?= $ml->tr('YES') ?>";
     var TRAN_NO = "<?= $ml->tr('NO') ?>";
     var TRAN_OK = "<?= $ml->tr('OK') ?>";

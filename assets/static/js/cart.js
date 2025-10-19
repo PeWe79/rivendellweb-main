@@ -26,6 +26,7 @@
  *                                               SOFTWARE.                                               *
  *********************************************************************************************************/
 var dt;
+var dt2;
 let wavesurfer, record
 let scrollingWaveform = false
 var wavesurferfile;
@@ -49,6 +50,8 @@ var bitTwo = ["32", "40", "48", "56", "64", "80", "96", "112", "128", "160", "19
 var ordtype = CUT_ORDER;
 var cartid;
 var cutname;
+var ppastecut;
+var ppastecart;
 
 function tr(translate) {
     var result = false;
@@ -734,7 +737,7 @@ function editcutaudio(i) {
                     $('#markerbody').preloader('remove');
                 })
 
-                
+
                 $("#audio_editor").modal("show");
             }
         });
@@ -961,6 +964,94 @@ function addcut(i) {
             }
         });
     }
+}
+
+function ccut(cutname, cart) {
+    jQuery.ajax({
+        type: "POST",
+        url: HOST_URL + '/forms/library/copycut.php',
+        data: {
+            cutname: cutname,
+            cart: cart
+        },
+        datatype: 'html',
+        success: function (data) {
+            var mydata = $.parseJSON(data);
+            var fel = mydata.error;
+            var kod = mydata.errorcode;
+            if (fel == "false") {
+                Swal.fire({
+                    text: TRAN_COPYCUTSUCCESS,
+                    icon: "success",
+                    buttonsStyling: false,
+                    confirmButtonText: TRAN_OK,
+                    customClass: {
+                        confirmButton: "btn fw-bold btn-primary"
+                    }
+                });
+
+            }
+        }
+    });
+}
+
+function remcop(cutname) {
+    jQuery.ajax({
+        type: "POST",
+        url: HOST_URL + '/forms/library/remcopy.php',
+        data: {
+            cutname: cutname
+        },
+        datatype: 'html',
+        success: function (data) {
+            var mydata = $.parseJSON(data);
+            var fel = mydata.error;
+            var kod = mydata.errorcode;
+            if (fel == "false") {
+                dt2.ajax.reload();
+            }
+        }
+    });
+}
+
+function pastecut(cutname, tocut) {
+    var autotrimen = 0;
+    if ($('#autotrimcopy').is(':checked')) {
+        autotrimen = 1;
+    } else {
+        autotrimen = 0;
+    }
+    $('#copyloading').preloader({
+        text: TRAN_PASTECUT,
+    });
+    jQuery.ajax({
+        type: "POST",
+        url: HOST_URL + '/forms/library/pastecut.php',
+        data: {
+            cutname: cutname,
+            tocut: ppastecut,
+            autotrimlevel: $("#trimlevelcopy").val(),
+            autotrimactive: autotrimen,
+        },
+        datatype: 'html',
+        success: function (data) {
+            var mydata = $.parseJSON(data);
+            var fel = mydata.error;
+            var kod = mydata.errorcode;
+            if (fel == "false") {
+                dt2.ajax.reload();
+                dt.ajax.reload();
+                $('#copyloading').preloader('remove');
+                $('#copy_modal').modal('hide');
+            }
+        }
+    });
+}
+
+function pcut(cutname) {
+    ppastecut = cutname;
+    dt2.ajax.reload();
+    $("#copy_modal").modal("show");
 }
 
 function importcut(i) {
@@ -1195,10 +1286,13 @@ dt = $("#cuts_table").DataTable({
             orderable: false,
             className: 'text-end',
             render: function (data, type, row) {
-                return `
+                if (row.length == 0) {
+                    return `
                 <div class="btn-group mb-3" role="group">
                 <a href="javascript:;" onclick="cutinfo('`+ row.cutname + `')" class="btn icon btn-primary" data-bs-toggle="tooltip" data-bs-placement="top"
                 title="`+ TRAN_CUTINFOEDIT + `"><i class="bi bi-pencil"></i></a>
+                <a href="javascript:;" onclick="pcut('`+ row.cutname + `')" class="btn icon btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="`+ TRAN_PASTECUT + `"><i class="bi bi-clipboard-plus"></i></a>
                 <a href="javascript:;" onclick="editcutaudio('`+ row.cutname + `')" class="btn icon btn-info" data-bs-toggle="tooltip" data-bs-placement="top"
                 title="`+ TRAN_EDITAUDIOMARKERS + `"><i class="bi bi-soundwave"></i></a>
                 <a href="javascript:;" onclick="recordcut('`+ row.cartnumber + `','` + row.cutname + `')" class="btn icon btn-danger" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -1211,6 +1305,26 @@ dt = $("#cuts_table").DataTable({
                 title="`+ TRAN_REMOVECUT + `"><i class="bi bi-x-square"></i></a>
             </div>
                     `;
+                } else {
+                    return `
+                <div class="btn-group mb-3" role="group">
+                <a href="javascript:;" onclick="cutinfo('`+ row.cutname + `')" class="btn icon btn-primary" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="`+ TRAN_CUTINFOEDIT + `"><i class="bi bi-pencil"></i></a>
+                <a href="javascript:;" onclick="ccut('`+ row.cutname + `','` + row.cartnumber + `')" class="btn icon btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="`+ TRAN_COPYCUT + `"><i class="bi bi-copy"></i></a>
+                <a href="javascript:;" onclick="editcutaudio('`+ row.cutname + `')" class="btn icon btn-info" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="`+ TRAN_EDITAUDIOMARKERS + `"><i class="bi bi-soundwave"></i></a>
+                <a href="javascript:;" onclick="recordcut('`+ row.cartnumber + `','` + row.cutname + `')" class="btn icon btn-danger" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="`+ TRAN_RECORD + `"><i class="bi bi-mic"></i></a>
+                <a href="javascript:;" onclick="importcut('`+ row.cutname + `')" class="btn icon btn-success" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="`+ TRAN_IMPORTAUDIO + `"><i class="bi bi-file-music"></i></a>
+                <a href="javascript:;" onclick="exportcut('`+ row.cutname + `')" class="btn icon btn-warning" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="`+ TRAN_EXPORTAUDIO + `"><i class="bi bi-cloud-download"></i></a>
+                <a href="javascript:;" onclick="deletecut('`+ row.cartnumber + `','` + row.cutname + `','` + row.description + `')" class="btn icon btn-danger" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="`+ TRAN_REMOVECUT + `"><i class="bi bi-x-square"></i></a>
+            </div>
+                    `;
+                }
             }
         },
     ],
@@ -2113,9 +2227,180 @@ $('#schedcuts').on('change', function (e) {
     }
 });
 
+function msToTime(s) {
+
+    // Pad to 2 or 3 digits, default is 2
+    function pad(n, z) {
+        z = z || 2;
+        return ('00' + n).slice(-z);
+    }
+
+    var ms = s % 1000;
+    s = (s - ms) / 1000;
+    var secs = s % 60;
+    s = (s - secs) / 60;
+    var mins = s % 60;
+    var hrs = (s - mins) / 60;
+
+    return pad(hrs) + ':' + pad(mins) + ':' + pad(secs) + '.' + pad(ms, 3);
+}
+
+
+var KTCartCopyTable = function () {
+    var initCopyDatatable = function () {
+        dt2 = $("#coplib_table").DataTable({
+            searchDelay: 500,
+            processing: true,
+            responsive: true,
+            autoWidth: false,
+            order: [
+                [0, 'asc']
+            ],
+            stateSave: true,
+            ajax: {
+                url: HOST_URL + "/tables/copy-table.php",
+            },
+            language: {
+                "emptyTable": TRAN_TABLENODATA,
+                "info": TRAN_TABLESHOWS + " _START_ " + TRAN_TABLETO + " _END_ " + TRAN_TABLETOTAL + " _TOTAL_ " + TRAN_TABLEROWS,
+                "infoEmpty": TRAN_TABLESHOWS + " 0 " + TRAN_TABLETO + " 0 " + TRAN_TABLETOTAL + " 0 " + TRAN_TABLEROWS,
+                "infoFiltered": "(" + TRAN_TABLEFILTERED + " _MAX_ " + TRAN_TABLEROWS + ")",
+                "infoThousands": " ",
+                "lengthMenu": TRAN_TABLESHOW + " _MENU_ " + TRAN_TABLEROWS,
+                "loadingRecords": TRAN_TABLELOADING,
+                "processing": TRAN_TABLEWORKING,
+                "search": TRAN_TABLESEARCH,
+                "zeroRecords": TRAN_TABLENORESULTS,
+                "thousands": " ",
+                "paginate": {
+                    "first": TRAN_TABLEFIRST,
+                    "last": TRAN_TABLELAST,
+                    "next": TRAN_TABLENEXT,
+                    "previous": TRAN_TABLEPREV
+                },
+                "select": {
+                    "rows": {
+                        "1": "1 " + TRAN_TABLESELECTED,
+                        "_": "%d " + TRAN_TABLESELECTED
+                    }
+                },
+                "aria": {
+                    "sortAscending": ": " + TRAN_TABLENSORTRISE,
+                    "sortDescending": ": " + TRAN_TABLENSORTFALL
+                }
+            },
+            columns: [
+                {
+                    data: 'CUTNAME'
+                },
+                {
+                    data: 'LENGTH'
+                },
+                {
+                    data: 'CART'
+                },
+                {
+                    data: null
+                },
+            ],
+            columnDefs: [
+                {
+                    targets: 1,
+                    render: function (data, type, row) {
+                        return msToTime(data);
+                    }
+                },
+
+                {
+                    targets: 2,
+                    render: function (data, type, row) {
+                        return data;
+                    }
+                },
+                {
+                    targets: -1,
+                    data: null,
+                    orderable: false,
+                    className: 'text-end',
+                    render: function (data, type, row) {
+
+                        return `
+                        <div class="btn-group mb-3" role="group">
+                        <a href="javascript:;" onclick="pastecut('`+ row.CUTNAME + `')" class="btn icon btn-primary" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="`+ TRAN_PASTECUT + `"><i class="bi bi-clipboard-plus"></i></a>
+                        <a href="javascript:;" onclick="remcop('`+ row.CUTNAME + `')" class="btn icon btn-danger" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="`+ TRAN_REMCOPIEDCUT + `"><i class="bi bi-clipboard-x"></i></a>
+                    </div>
+                            `;
+                    }
+                },
+            ],
+        });
+
+    }
+
+    const element01 = document.getElementById('copy_modal');
+    const modal01 = new bootstrap.Modal(element01);
+
+    var initCopyModalButtons = function () {
+        const cancelButton1 = element01.querySelector('[data-kt-copy-modal-action="cancel"]');
+        cancelButton1.addEventListener('click', e => {
+            e.preventDefault();
+
+            Swal.fire({
+                text: TRAN_CLOSETHEWINDOW,
+                icon: "warning",
+                showCancelButton: true,
+                buttonsStyling: false,
+                confirmButtonText: TRAN_YES,
+                cancelButtonText: TRAN_NO,
+                customClass: {
+                    confirmButton: "btn btn-primary",
+                    cancelButton: "btn btn-active-light"
+                }
+            }).then(function (result) {
+                if (result.value) {
+                    modal01.hide();
+                }
+            });
+        });
+        const closeButton2 = element01.querySelector('[data-kt-copy-modal-action="close"]');
+        closeButton2.addEventListener('click', e => {
+            e.preventDefault();
+
+            Swal.fire({
+                text: TRAN_CLOSETHEWINDOW,
+                icon: "warning",
+                showCancelButton: true,
+                buttonsStyling: false,
+                confirmButtonText: TRAN_YES,
+                cancelButtonText: TRAN_NO,
+                customClass: {
+                    confirmButton: "btn btn-primary",
+                    cancelButton: "btn btn-active-light"
+                }
+            }).then(function (result) {
+                if (result.value) {
+                    modal01.hide();
+
+                }
+            });
+        });
+    }
+
+    return {
+        init: function () {
+            initCopyDatatable();
+            initCopyModalButtons();
+        }
+    }
+}();
+
 
 initImportModalButtons();
 initExportModalButtons();
 initCutInfoModalButtons();
 initEditMarkerModalButtons();
 initRecordVoiceButtons();
+
+KTCartCopyTable.init();

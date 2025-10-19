@@ -68,6 +68,16 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/grids.json')) {
   $grids_data = json_decode($json_string, true);
 }
 /*****************************
+ * FOR HANDLE COPY FUNCTIONS *
+ *****************************/
+if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json')) {
+  $copy_data = array();
+} else {
+  $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/copy.json';
+  $json_string = file_get_contents($filepath);
+  $copy_data = json_decode($json_string, true);
+}
+/*****************************
  * FOR HANDLE LOG GENERATION *
  *****************************/
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json')) {
@@ -237,4 +247,17 @@ if (!file_exists(LOCAL_PATH_ROOT . "/data/backups/")) {
   $oldmask = umask(0);
   mkdir(LOCAL_PATH_ROOT . "/data/backups", 0777);
   umask($oldmask);
+}
+/***********************************
+ * REMOVE COPY OLDER THAN ONE HOUR *
+ ***********************************/
+foreach ($copy_data['CUTS'] as $lines) {
+  $isolder = $functions->isOlderThanOneHour($lines['ADDED']);
+  if ($isolder) {
+    unset($copy_data['CUTS'][$lines['CUTNAME']]);
+    $jsonData = json_encode($copy_data, JSON_PRETTY_PRINT);
+    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData)) {
+      $errorcopy = 1;
+    }
+  }
 }
