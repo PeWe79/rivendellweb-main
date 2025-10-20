@@ -35,11 +35,18 @@ $cutname = $_POST["cutname"];
 $tocut = $_POST["tocut"];
 $autotrimlevel = $_POST["autotrimlevel"];
 $autotrimactive = $_POST["autotrimactive"];
+$audiomarkersave = $_POST["audiomarkersave"];
+$cutinfosave = $_POST["cutinfosave"];
 $filepath = '/var/snd/' . $cutname . '.wav';
 $cartno = substr($tocut, 0, strpos($tocut, "_"));
 $cutid = substr($tocut, strpos($tocut, "_") + 1);
 $startpoint = 0;
 $targetPath = '/tmp/';
+if ($info->getCartInfo($cartno, "USE_WEIGHTING") == 'N') {
+    $useorder = 1;
+} else {
+    $useorder = 0;
+}
 if ($autotrimactive == 1) {
     $autolevel = $autotrimlevel;
 } else {
@@ -67,22 +74,92 @@ if (file_exists($filepath)) {
     curl_close($ch);
     if (preg_match('/ResponseCode>200</', $result, $matches)) {
 
-        if (!$functions->rd_edit_marker($cartno, $cutid, $copy_data['CUTS'][$_POST["cutname"]]['START_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['END_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['TALK_START_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['TALK_END_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['FADEUP_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['FADEDOWN_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['SEGUE_START_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['SEGUE_END_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['HOOK_START_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['HOOK_END_POINT'])) {
-            $echodata = ['error' => 'true', 'errorcode' => '1'];
-            echo json_encode($echodata);
-        } else {
-            unset($copy_data['CUTS'][$_POST["cutname"]]);
-            $jsonData = json_encode($copy_data, JSON_PRETTY_PRINT);
-            if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData)) {
+        if ($audiomarkersave == 1) {
+            if (!$functions->rd_edit_marker($cartno, $cutid, $copy_data['CUTS'][$_POST["cutname"]]['START_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['END_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['TALK_START_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['TALK_END_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['FADEUP_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['FADEDOWN_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['SEGUE_START_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['SEGUE_END_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['HOOK_START_POINT'], $copy_data['CUTS'][$_POST["cutname"]]['HOOK_END_POINT'])) {
                 $echodata = ['error' => 'true', 'errorcode' => '1'];
                 echo json_encode($echodata);
-            } else {
-                $echodata = ['error' => 'false', 'errorcode' => '0'];
-                echo json_encode($echodata);
+                exit();
             }
         }
+
+        if ($cutinfosave == 1) {
+            if ($useorder == 1) {
+                if (!$dbfunc->updateCutOrder($_POST["cutname"], $copy_data['CUTS'][$_POST["cutname"]]['WEIGHT'])) {
+                    $echodata = ['error' => 'true', 'errorcode' => '1'];
+                    echo json_encode($echodata);
+                    exit();
+                }
+            }
+
+            if ($copy_data['CUTS'][$_POST["cutname"]]['EVERGREEN'] == "Y") {
+                $evergreen = 1;
+            } else {
+                $evergreen = 0;
+            }
+
+            if ($copy_data['CUTS'][$_POST["cutname"]]['MON'] == "Y") {
+                $daymon = 1;
+            } else {
+                $daymon = 0;
+            }
+
+            if ($copy_data['CUTS'][$_POST["cutname"]]['TUE'] == "Y") {
+                $daytue = 1;
+            } else {
+                $daytue = 0;
+            }
+
+            if ($copy_data['CUTS'][$_POST["cutname"]]['WED'] == "Y") {
+                $daywed = 1;
+            } else {
+                $daywed = 0;
+            }
+
+            if ($copy_data['CUTS'][$_POST["cutname"]]['THU'] == "Y") {
+                $daythu = 1;
+            } else {
+                $daythu = 0;
+            }
+
+            if ($copy_data['CUTS'][$_POST["cutname"]]['FRI'] == "Y") {
+                $dayfri = 1;
+            } else {
+                $dayfri = 0;
+            }
+
+            if ($copy_data['CUTS'][$_POST["cutname"]]['SAT'] == "Y") {
+                $daysat = 1;
+            } else {
+                $daysat = 0;
+            }
+
+            if ($copy_data['CUTS'][$_POST["cutname"]]['SUN'] == "Y") {
+                $daysun = 1;
+            } else {
+                $daysun = 0;
+            }
+
+            if (!$functions->rd_edit_cut($cartno, $cutid, $evergreen, $copy_data['CUTS'][$_POST["cutname"]]['DESCRIPTION'], $copy_data['CUTS'][$_POST["cutname"]]['OUTCUE'], $copy_data['CUTS'][$_POST["cutname"]]['ISRC'], $copy_data['CUTS'][$_POST["cutname"]]['ISCI'], $copy_data['CUTS'][$_POST["cutname"]]['START_DATETIME'], $copy_data['CUTS'][$_POST["cutname"]]['END_DATETIME'], $daymon, $daytue, $daywed, $daythu, $dayfri, $daysat, $daysun, $copy_data['CUTS'][$_POST["cutname"]]['START_DAYPART'], $copy_data['CUTS'][$_POST["cutname"]]['END_DAYPART'], $copy_data['CUTS'][$_POST["cutname"]]['WEIGHT'], $useorder)) {
+                $echodata = ['error' => 'true', 'errorcode' => '1'];
+                echo json_encode($echodata);
+                exit();
+            }
+        }
+
+        unset($copy_data['CUTS'][$_POST["cutname"]]);
+        $jsonData = json_encode($copy_data, JSON_PRETTY_PRINT);
+        if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData)) {
+            $echodata = ['error' => 'true', 'errorcode' => '1'];
+            echo json_encode($echodata);
+            exit();
+        } else {
+            $echodata = ['error' => 'false', 'errorcode' => '0'];
+            echo json_encode($echodata);
+        }
+
     } else {
         $echodata = ['error' => 'true', 'errorcode' => '1'];
         echo json_encode($echodata);
+        exit();
     }
 }

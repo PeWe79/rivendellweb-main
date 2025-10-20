@@ -1106,3 +1106,5 @@ $sv_SE['PASTECUT'] = 'Klistra in cut';
 $sv_SE['COPIEDCUTS'] = 'Kopierade Cuts';
 $sv_SE['FROMCARTCUT'] = 'Från cart';
 $sv_SE['REMCOPIEDCUT'] = 'Ta bort kopierad cut';
+$sv_SE['COPYCUTINFO'] = 'Kopiera cut info';
+$sv_SE['COPYAUDIOMARKERS'] = 'Kopiera ljud markörer';

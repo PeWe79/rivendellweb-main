@@ -1106,3 +1106,5 @@ $en_US['PASTECUT'] = 'Paste Cut';
 $en_US['COPIEDCUTS'] = 'Copied Cuts';
 $en_US['FROMCARTCUT'] = 'From Cart';
 $en_US['REMCOPIEDCUT'] = 'Remove Copied Cut';
+$en_US['COPYCUTINFO'] = 'Copy cut info';
+$en_US['COPYAUDIOMARKERS'] = 'Copy audio markers';

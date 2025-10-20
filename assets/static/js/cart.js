@@ -1016,10 +1016,22 @@ function remcop(cutname) {
 
 function pastecut(cutname, tocut) {
     var autotrimen = 0;
+    var cutinfosave = 0;
+    var audiomarkersave = 0;
     if ($('#autotrimcopy').is(':checked')) {
         autotrimen = 1;
     } else {
         autotrimen = 0;
+    }
+    if ($('#cutinfocopy').is(':checked')) {
+        cutinfosave = 1;
+    } else {
+        cutinfosave = 0;
+    }
+    if ($('#markerinfocopy').is(':checked')) {
+        audiomarkersave = 1;
+    } else {
+        audiomarkersave = 0;
     }
     $('#copyloading').preloader({
         text: TRAN_PASTECUT,
@@ -1032,6 +1044,8 @@ function pastecut(cutname, tocut) {
             tocut: ppastecut,
             autotrimlevel: $("#trimlevelcopy").val(),
             autotrimactive: autotrimen,
+            audiomarkersave: audiomarkersave,
+            cutinfosave: cutinfosave
         },
         datatype: 'html',
         success: function (data) {

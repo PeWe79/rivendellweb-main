@@ -64,7 +64,7 @@ $plugin_js = '<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js
 <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
 <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/timeline.min.js"></script>
 <script src="' . DIR . '/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>';
-$page_js = '<script src="' . DIR . '/assets/static/js/cart.js?43431"></script>';
+$page_js = '<script src="' . DIR . '/assets/static/js/cart.js?43432"></script>';
 
 
 if (!$info->checkMacroNormal($id, 1)) {
@@ -520,6 +520,28 @@ if (!$info->checkMacroNormal($id, 1)) {
                             <input type="number" id="trimlevelcopy" min="-99" max="0" class="form-control" name="trimlevel"
                                 value="<?php echo AUTOTRIM ?>">
                         </div>
+                        <div class="col-12 col-md-8 offset-md-4 form-group">
+                            <div class='form-check'>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="cutinfocopy" name="cutinfo" class='form-check-input'
+                                        checked>
+                                    <label for="autotrim">
+                                        <?= $ml->tr('COPYCUTINFO') ?>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-8 offset-md-4 form-group">
+                            <div class='form-check'>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="markerinfocopy" name="markerinfo" class='form-check-input'
+                                        checked>
+                                    <label for="autotrim">
+                                        <?= $ml->tr('COPYAUDIOMARKERS') ?>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row">
@@ -603,7 +625,7 @@ if (!$info->checkMacroNormal($id, 1)) {
                             </div>
                             <div class="col-md-8 form-group">
                                 <input type="number" id="trimlevel_rec" min="-99" max="0" class="form-control"
-                                    name="trimlevel" value="-35">
+                                    name="trimlevel" value="<?php echo AUTOTRIM ?>">
                             </div>
                             <div class="col-12 col-md-8 offset-md-4 form-group">
                                 <div class='form-check'>
@@ -623,7 +645,7 @@ if (!$info->checkMacroNormal($id, 1)) {
                             </div>
                             <div class="col-md-8 form-group">
                                 <input type="number" id="normalizelevel_rec" min="-30" max="0" class="form-control"
-                                    name="normalizelevel" value="-13">
+                                    name="normalizelevel" value="<?php echo NORMALIZE ?>">
                             </div>
                         </div>
                         <button class="btn btn-danger" id="recordrec">
