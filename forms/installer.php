@@ -63,6 +63,7 @@ function fileCreateWrite()
             'olderthan' => $_POST['back_older'],
         ),
         'jsonID' => 'AxZQ9f3fEUkLz25131',
+        'usrsett' => array($_POST["admin_usr"] => array('rdcatch' => '1')),
 
     );
     $array_data[] = $extra;
