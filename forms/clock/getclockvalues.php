@@ -45,7 +45,7 @@ $labelsdata[] = $line['EVENT_NAME'];
 $colordata[] = $line['COLOR'];
 $iddata[] = $line['ID'];
 }
-if ($totalpercent < 98) {
+if ($totalpercent < 95) {
     $totalthis = 100 - $totalpercent;
     $valuesdata[] = number_format((float)$totalthis, 2);
     $labelsdata[] = $ml->tr('NONE');
