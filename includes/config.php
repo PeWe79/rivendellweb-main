@@ -42,6 +42,8 @@ $json_sett = json_decode($json_string, true);
  **********************************************************************/
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/reset.json')) {
   $reset_data = array();
+  $jsonData = json_encode($reset_data, JSON_PRETTY_PRINT);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/reset.json', $jsonData);
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/reset.json';
   $json_string = file_get_contents($filepath);
@@ -52,6 +54,8 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/reset.json')) {
  **************************************************************/
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/logedit.json')) {
   $logedit_data = array();
+  $jsonData = json_encode($logedit_data, JSON_PRETTY_PRINT);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/logedit.json', $jsonData); 
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/logedit.json';
   $json_string = file_get_contents($filepath);
@@ -62,6 +66,8 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/logedit.json')) {
  **************************************************************/
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/grids.json')) {
   $grids_data = array();
+  $jsonData = json_encode($grids_data, JSON_PRETTY_PRINT);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/grids.json', $jsonData);  
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/grids.json';
   $json_string = file_get_contents($filepath);
@@ -72,6 +78,8 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/grids.json')) {
  *****************************/
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json')) {
   $copy_data = array();
+  $jsonData = json_encode($copy_data, JSON_PRETTY_PRINT);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData); 
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/copy.json';
   $json_string = file_get_contents($filepath);
@@ -82,6 +90,8 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json')) {
  *****************************/
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json')) {
   $loggen_data = array();
+  $jsonData = json_encode($loggen_data, JSON_PRETTY_PRINT);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json', $jsonData);
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json';
   $json_string = file_get_contents($filepath);
@@ -89,6 +99,8 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/generatelog.json')) {
 }
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/loggenlines.json')) {
   $loggenlines_data = array();
+  $jsonData = json_encode($loggenlines_data, JSON_PRETTY_PRINT);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/loggenlines.json', $jsonData);
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/loggenlines.json';
   $json_string = file_get_contents($filepath);
@@ -96,6 +108,8 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/loggenlines.json')) {
 }
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_data.json')) {
   $loggenart_data = array();
+  $jsonData = json_encode($loggenart_data, JSON_PRETTY_PRINT);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_data.json', $jsonData);
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/loggen_data.json';
   $json_string = file_get_contents($filepath);
@@ -103,6 +117,8 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_data.json')) {
 }
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_log.json')) {
   $loggenlog_data = array();
+  $jsonData = json_encode($loggenlog_data, JSON_PRETTY_PRINT);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/loggen_log.json', $jsonData);
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/loggen_log.json';
   $json_string = file_get_contents($filepath);
