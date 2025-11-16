@@ -188,23 +188,23 @@ $errors = 0;
                                         </small></p>
                                 </div>
                                 <div class="col-md-4">
-                                        <label for="back_older">
+                                    <label for="back_older">
                                         Remove backup older than
-                                        </label>
-                                    </div>
-                                    <div class="col-md-8 form-group">
-                                        <select id="back_older" name="back_older" class="choices form-select">
+                                    </label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <select id="back_older" name="back_older" class="choices form-select">
                                         <option value="0" SELECTED>
-                                        One week
-                                            </option>
-                                            <option value="1">
+                                            One week
+                                        </option>
+                                        <option value="1">
                                             One month
-                                            </option>
-                                        </select>
-                                        <p><small class="text-muted">
-                                        Will remove backups that pass this creation time.
-                                            </small></p>
-                                    </div>
+                                        </option>
+                                    </select>
+                                    <p><small class="text-muted">
+                                            Will remove backups that pass this creation time.
+                                        </small></p>
+                                </div>
                                 <div class="col-md-4">
                                     <label for="pass_reset">Use Password Reset</label>
                                 </div>
@@ -230,6 +230,27 @@ $errors = 0;
                                     <input type="text" id="normalize" class="form-control" name="normalize"
                                         placeholder="-13">
                                     <p><small class="text-muted">The default normalize level to use.</small></p>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="trans_type">
+                                        Default Logedit Transition Type
+                                    </label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <select id="trans_type" name="trans_type" class="choices form-select">
+                                        <option value="0" SELECTED>
+                                            Play
+                                        </option>
+                                        <option value="1">
+                                            Segue
+                                        </option>
+                                        <option value="2">
+                                            Stop
+                                        </option>
+                                    </select>
+                                    <p><small class="text-muted">
+                                            Default tranition type to be selected when add to logedit.
+                                        </small></p>
                                 </div>
                                 <div class="divider">
                                     <div class="divider-text">SMTP Settings</div>
@@ -415,7 +436,10 @@ $errors = 0;
             </div>
     <?php } else { ?>
         <?php $expire = time() + (3600 * 1);
-        setcookie('installtest', 'true', $expire, '/'); ?>
+        setcookie('installtest', 'true', $expire, '/');
+        $cmd = "chmod -R 0644 ".$_SERVER['DOCUMENT_ROOT']."/data";
+        exec($cmd);
+        ?>
             <div class="container">
                 <div class="card mt-5">
                     <div class="card-header">

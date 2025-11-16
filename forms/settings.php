@@ -35,6 +35,7 @@ $json_sett["deflang"] = $_POST['def_lang'];
 $json_sett["usereset"] = $_POST['pass_reset'];
 $json_sett["autotrim"] = $_POST['autotrim'];
 $json_sett["normalize"] = $_POST['normalize'];
+$json_sett["deftrans"] = $_POST['trans_type'];
 $json_sett["smtpserv"] = $_POST['smtp_server'];
 $json_sett["smtplogin"] = $_POST['smtp_login'];
 $json_sett["smtpenc"] = $_POST['smtp_enc'];

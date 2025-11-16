@@ -71,6 +71,9 @@ $('#install_form').validate({
         normalize: {
             required: true,
         },
+        trans_type: {
+            required: true,
+        },
         smtp_login: {
             required: true,
         },
@@ -122,6 +125,9 @@ $('#install_form').validate({
             required: 'This can not be empty!',
         },
         normalize: {
+            required: 'This can not be empty!',
+        },
+        trans_type: {
             required: 'This can not be empty!',
         },
         smtp_server: {

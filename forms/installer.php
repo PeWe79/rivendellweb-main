@@ -58,11 +58,12 @@ function fileCreateWrite()
         'usereset' => $_POST["pass_reset"],
         'autotrim' => $_POST["autotrim"],
         'normalize' => $_POST["normalize"],
+        'deftrans' => $_POST["trans_type"],
         'backups' => array(
             'autotype' => $_POST['back_type'],
             'olderthan' => $_POST['back_older'],
         ),
-        'jsonID' => 'AxZQ9f3fEUkLz25131',
+        'jsonID' => 'AxZQ9f3fEUWaF54232353AO',
         'usrsett' => array($_POST["admin_usr"] => array('rdcatch' => '1')),
 
     );

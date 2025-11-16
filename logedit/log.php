@@ -617,13 +617,13 @@ $page_js = '<script src="' . DIR . '/assets/static/js/log.js?356342324"></script
                                 </div>
                                 <div class="col-md-8 form-group">
                                     <select id="ifprevends_voice" name="ifprevends" class="choices form-select">
-                                        <option value="0">
+                                        <option value="0" <?php if (DEFTRANS == 0) { echo "selected"; } ?>>
                                             <?= $ml->tr('PLAY') ?>
                                         </option>
-                                        <option value="1">
+                                        <option value="1" <?php if (DEFTRANS == 1) { echo "selected"; } ?>>
                                             <?= $ml->tr('SEGUE') ?>
                                         </option>
-                                        <option value="2" selected>
+                                        <option value="2" <?php if (DEFTRANS == 2) { echo "selected"; } ?>>
                                             <?= $ml->tr('STOP') ?>
                                         </option>
 
@@ -753,13 +753,13 @@ $page_js = '<script src="' . DIR . '/assets/static/js/log.js?356342324"></script
                                 </div>
                                 <div class="col-md-8 form-group">
                                     <select id="ifprevends_marker" name="ifprevends" class="choices form-select">
-                                        <option value="0">
+                                        <option value="0" <?php if (DEFTRANS == 0) { echo "selected"; } ?>>
                                             <?= $ml->tr('PLAY') ?>
                                         </option>
-                                        <option value="1" selected>
+                                        <option value="1" <?php if (DEFTRANS == 1) { echo "selected"; } ?>>
                                             <?= $ml->tr('SEGUE') ?>
                                         </option>
-                                        <option value="2" selected>
+                                        <option value="2" <?php if (DEFTRANS == 2) { echo "selected"; } ?>>
                                             <?= $ml->tr('STOP') ?>
                                         </option>
 
@@ -896,13 +896,13 @@ $page_js = '<script src="' . DIR . '/assets/static/js/log.js?356342324"></script
                                 </div>
                                 <div class="col-md-8 form-group">
                                     <select id="ifprevends_cart" name="ifprevends" class="choices form-select">
-                                        <option value="0">
+                                        <option value="0" <?php if (DEFTRANS == 0) { echo "selected"; } ?>>
                                             <?= $ml->tr('PLAY') ?>
                                         </option>
-                                        <option value="1" selected>
+                                        <option value="1" <?php if (DEFTRANS == 1) { echo "selected"; } ?>>
                                             <?= $ml->tr('SEGUE') ?>
                                         </option>
-                                        <option value="2" selected>
+                                        <option value="2" <?php if (DEFTRANS == 2) { echo "selected"; } ?>>
                                             <?= $ml->tr('STOP') ?>
                                         </option>
 
@@ -1139,13 +1139,13 @@ $page_js = '<script src="' . DIR . '/assets/static/js/log.js?356342324"></script
                                 </div>
                                 <div class="col-md-8 form-group">
                                     <select id="ifprevends_logchain" name="ifprevends" class="choices form-select">
-                                        <option value="0">
+                                        <option value="0" <?php if (DEFTRANS == 0) { echo "selected"; } ?>>
                                             <?= $ml->tr('PLAY') ?>
                                         </option>
-                                        <option value="1" selected>
+                                        <option value="1" <?php if (DEFTRANS == 1) { echo "selected"; } ?>>
                                             <?= $ml->tr('SEGUE') ?>
                                         </option>
-                                        <option value="2" selected>
+                                        <option value="2" <?php if (DEFTRANS == 2) { echo "selected"; } ?>>
                                             <?= $ml->tr('STOP') ?>
                                         </option>
 

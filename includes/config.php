@@ -143,6 +143,7 @@ define('APIURL', 'http://localhost/rd-bin/rdxport.cgi'); //DO NOT CHANGE THIS!
 define('USERESET', $json_sett['usereset']);
 define('AUTOTRIM', $json_sett['autotrim']);
 define('NORMALIZE', $json_sett['normalize']);
+define('DEFTRANS', $json_sett['deftrans']);
 if (isset($json_sett['closedown'])) {
   define('CLOSEDOWNED', $json_sett['closedown']);
 } else {
@@ -252,7 +253,7 @@ $languagesArray = array(
 /***********************************************
  * TO DO UPDATE TO SUPPORT NEW RDCATCH CHANGES *
  ***********************************************/
-if ($json_sett['jsonID'] != 'AxZQ9f3fEUWaF5423235SFA' && isset($json_sett["admin"][$_COOKIE['username']]["username"])) {
+if ($json_sett['jsonID'] != 'AxZQ9f3fEUWaF54232353AO' && isset($json_sett["admin"][$_COOKIE['username']]["username"])) {
   header('Location: ' . DIR . '/updater');
   //exit(); 
 }

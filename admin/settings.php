@@ -343,6 +343,34 @@ $page_js = '<script src="'.DIR.'/assets/static/js/settings.js?356532"></script>'
                                                 <?= $ml->tr('NORMALIZELEVELTEXT'); ?>
                                             </small></p>
                                     </div>
+                                    <div class="col-md-4">
+                                        <label for="trans_type">
+                                            <?= $ml->tr('DEFTRANSLOG'); ?>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        <select id="trans_type" name="trans_type" class="choices form-select">
+                                            <option value="0" <?php if ($json_sett["deftrans"] == '0') {
+                                                echo 'SELECTED';
+                                            } ?>>
+                                                <?= $ml->tr('PLAY'); ?>
+                                            </option>
+                                            <option value="1" <?php if ($json_sett["deftrans"] == '1') {
+                                                echo 'SELECTED';
+                                            } ?>>
+                                                <?= $ml->tr('SEGUE'); ?>
+                                            </option>
+                                            <option value="2" <?php if ($json_sett["deftrans"] == '2') {
+                                                echo 'SELECTED';
+                                            } ?>>
+                                                <?= $ml->tr('STOP'); ?>
+                                            </option>
+                                        </select>
+                                        <p><small class="text-muted">
+                                                <?= $ml->tr('DEFTRANSLOGDET'); ?>
+                                            </small>
+                                        </p>
+                                    </div>
                                     <div class="divider">
                                         <div class="divider-text">
                                             <?= $ml->tr('SMTPSETTINGS'); ?>

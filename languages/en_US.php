@@ -1108,3 +1108,5 @@ $en_US['FROMCARTCUT'] = 'From Cart';
 $en_US['REMCOPIEDCUT'] = 'Remove Copied Cut';
 $en_US['COPYCUTINFO'] = 'Copy cut info';
 $en_US['COPYAUDIOMARKERS'] = 'Copy audio markers';
+$en_US['DEFTRANSLOG'] = 'Default Logedit Transition Type';
+$en_US['DEFTRANSLOGDET'] = 'Default tranition type to be selected when add to logedit.';

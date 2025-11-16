@@ -1108,3 +1108,5 @@ $sv_SE['FROMCARTCUT'] = 'Från cart';
 $sv_SE['REMCOPIEDCUT'] = 'Ta bort kopierad cut';
 $sv_SE['COPYCUTINFO'] = 'Kopiera cut info';
 $sv_SE['COPYAUDIOMARKERS'] = 'Kopiera ljud markörer';
+$sv_SE['DEFTRANSLOG'] = 'Standard log redigerare övergångstyp';
+$sv_SE['DEFTRANSLOGDET'] = 'Standard övergångstyp att välja när du lägger till i loggen.';

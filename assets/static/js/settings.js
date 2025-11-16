@@ -71,6 +71,9 @@ $('#install_form').validate({
         normalize: {
             required: true,
         },
+        trans_type: {
+            required: true,
+        },
         smtp_server: {
             required: true,
         },
@@ -115,6 +118,9 @@ $('#install_form').validate({
             required: TRAN_NOTBEEMPTY,
         },
         normalize: {
+            required: TRAN_NOTBEEMPTY,
+        },
+        trans_type: {
             required: TRAN_NOTBEEMPTY,
         },
         smtp_server: {
