@@ -24,6 +24,8 @@
     var TRAN_SELECTNOOPTIONS = "<?= $ml->tr('NOOPTIONSSELECT') ?>";
     var TRAN_SELECTPRESSSELECT = "<?= $ml->tr('PRESSSELECTSELECT') ?>";
     var TRAN_NORIGHTS = "<?= $ml->tr('NORIGHTS') ?>";
+    var TRAN_SNGAFVOICETRKNTHBEF = "<?= $ml->tr('SNGAFVOICETRKNTHBEF') ?>";
+    var TRAN_SNGAFVOICETRKNTHAFT = "<?= $ml->tr('SNGAFVOICETRKNTHAFT') ?>";
     <?php if ($json_sett["multitrack"] == '1') { ?>
         var ALLOW_MULTITRACK = "1";
     <?php } else { ?>

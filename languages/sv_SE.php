@@ -1110,3 +1110,7 @@ $sv_SE['COPYCUTINFO'] = 'Kopiera cut info';
 $sv_SE['COPYAUDIOMARKERS'] = 'Kopiera ljud markörer';
 $sv_SE['DEFTRANSLOG'] = 'Standard log redigerare övergångstyp';
 $sv_SE['DEFTRANSLOGDET'] = 'Standard övergångstyp att välja när du lägger till i loggen.';
+$sv_SE['SNGBEFVOICETRK'] = 'Låt före voicetrack';
+$sv_SE['SNGAFVOICETRK'] = 'Låt efter voicetrack';
+$sv_SE['SNGAFVOICETRKNTHBEF'] = 'Inget före';
+$sv_SE['SNGAFVOICETRKNTHAFT'] = 'Inget efter';

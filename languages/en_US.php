@@ -1110,3 +1110,7 @@ $en_US['COPYCUTINFO'] = 'Copy cut info';
 $en_US['COPYAUDIOMARKERS'] = 'Copy audio markers';
 $en_US['DEFTRANSLOG'] = 'Default Logedit Transition Type';
 $en_US['DEFTRANSLOGDET'] = 'Default tranition type to be selected when add to logedit.';
+$en_US['SNGBEFVOICETRK'] = 'Song before voicetrack';
+$en_US['SNGAFVOICETRK'] = 'Song after voicetrack';
+$en_US['SNGAFVOICETRKNTHBEF'] = 'Nothing before';
+$en_US['SNGAFVOICETRKNTHAFT'] = 'Nothing after';

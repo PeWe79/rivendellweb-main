@@ -65,8 +65,8 @@ $plugin_js = '<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js
 <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/envelope.min.js"></script>
 <script src="' . DIR . '/assets/extensions/waveform/waveform-playlist.js"></script>
 <script src="' . DIR . '/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>';
-$page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
-<script src="' . DIR . '/assets/static/js/multitrack.js?3246543566"></script>';
+$page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js?76753"></script>
+<script src="' . DIR . '/assets/static/js/multitrack.js?3246543572"></script>';
 
 ?>
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/top.php'; ?>
@@ -131,6 +131,7 @@ $page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
                         <div class="tab-content" id="hourTabContent">
                             <?php
                             $hrtime = 0;
+                            $currtimenow = 0;
                             for ($i = 0; $i < 24; $i++) {
                                 $hrtime = $i;
                                 if ($hrtime == 0) {
@@ -168,7 +169,9 @@ $page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php foreach ($logs as $log) {
+                                                <?php 
+                                                $faketime = 0;
+                                                foreach ($logs as $log) {
 
                                                     $type = $log['type'];
                                                     $cart = $log['cart'];
@@ -180,8 +183,15 @@ $page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
                                                     $lineid = $log['line_id'];
                                                     $label = $log['label'];
                                                     $color = $log['color'];
+                                                    $currtimenow = $currtimenow + $log['length'];
+                                                    $faketime = $currtimenow - $log['length'];
                                                     $length = $functions->msToHHMMSS($log['length']);
-                                                    $startTime = $functions->msToHHMMSS_fromMID($log['start_time']);
+                                                    if ($log['start_time'] != 0) {
+                                                        $startTime = $functions->msToHHMMSS_fromMID($log['start_time']);
+                                                    } else {
+                                                        $startTime = $functions->msToHHMMSS_fromMID($faketime);
+                                                    }
+                                                    
                                                     if (($vtLower <= $cart) && ($cart <= $vtUpper)) {
                                                         $group = $vtGroup;
                                                     }
@@ -189,7 +199,7 @@ $page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
                                                         ?>
                                                         <tr id="vtrow_<?php echo $lineid; ?>">
                                                             <td>
-                                                                <?php echo $startTime; ?>
+                                                                <span id="vsstrow_<?php echo $lineid; ?>"><?php echo $startTime; ?></span>
                                                             </td>
                                                             <td id="cart_<?php echo $lineid; ?>">
                                                                 <?= $ml->tr('NEW') ?>
@@ -219,7 +229,7 @@ $page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
                                                         //Labels       ?>
                                                                 <tr id="vtrow_<?php echo $lineid; ?>">
                                                                     <td>
-                                                                <?php echo $startTime; ?>
+                                                                    <span id="vsstrow_<?php echo $lineid; ?>"><?php echo $startTime; ?></span>
                                                                     </td>
                                                                     <td>
                                                                 <?= $ml->tr('MARKER') ?>
@@ -236,7 +246,7 @@ $page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
                                                     <?php } else if ($group == $vtGroup) { ?>
                                                                     <tr id="vtrow_<?php echo $lineid; ?>">
                                                                         <td>
-                                                                <?php echo $startTime; ?>
+                                                                        <span id="vsstrow_<?php echo $lineid; ?>"><?php echo $startTime; ?></span>
                                                                         </td>
                                                                         <td id="cart_<?php echo $lineid; ?>">
                                                                 <?php echo $cart; ?>
@@ -276,7 +286,7 @@ $page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
                                                     <?php } else if ($cart != 0) { ?>
                                                                         <tr id="vtrow_<?php echo $lineid; ?>">
                                                                             <td>
-                                                                <?php echo $startTime; ?>
+                                                                            <span id="vsstrow_<?php echo $lineid; ?>"><?php echo $startTime; ?></span>
                                                                             </td>
                                                                             <td>
                                                                 <?php echo $cart; ?>
@@ -423,6 +433,22 @@ $page_js = '<script src="' . DIR . '/assets/static/js/voicetrack.js"></script>
                 <div class="modal-body">
                     <div class="form-body">
                         <div class="row">
+                            <div class="col-md-4">
+                                <label for="before_song">
+                                    <?= $ml->tr('SNGBEFVOICETRK') ?>
+                                </label>
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <P id="before_song"></P>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="after_song">
+                                    <?= $ml->tr('SNGAFVOICETRK') ?>
+                                </label>
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <P id="after_song"></P>
+                            </div>
 
                             <div class="col-md-4">
                                 <label for="audiochannels_rec">

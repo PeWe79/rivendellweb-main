@@ -34,6 +34,29 @@ var logname;
 var username;
 let newblob;
 
+function msToTime(s, ms) {
+
+    function pad(n, z) {
+        z = z || 2;
+        return ('00' + n).slice(-z);
+    }
+
+    var ms = s % 1000;
+    s = (s - ms) / 1000;
+    var secs = s % 60;
+    s = (s - secs) / 60;
+    var mins = s % 60;
+    var hrs = (s - mins) / 60;
+
+    if (ms == 1) {
+        return pad(hrs) + ':' + pad(mins) + ':' + pad(secs) + '.' + pad(ms, 1);
+    } else {
+        return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
+    }
+
+
+}
+
 const createWaveSurfer = () => {
     if (wavesurfer) {
         wavesurfer.destroy()
@@ -146,6 +169,33 @@ for (let i = 0; i < choices.length; i++) {
     }
 }
 
+function updateRowTime(z) {
+    $.ajax({
+        type: "POST",
+        url: HOST_URL + '/forms/voicetrack/rowsinfo.php',
+        data: {
+            logname: z
+        },
+        dataType: 'json',
+
+        success: function (data) {
+            var currentnow = 0;
+            var faketime = 0;
+            $.each(data, function (idx, data) {
+                currentnow = currentnow + data.AVERAGE_LENGTH;
+                faketime = currentnow - data.AVERAGE_LENGTH;
+
+                if (data.START_TIME != 0) {
+                    $("#vsstrow_" + data.LINE_ID).html(msToTime(data.START_TIME, 0));
+                } else {
+                    $("#vsstrow_" + data.LINE_ID).html(msToTime(faketime, 0));
+                }
+
+            });
+        }
+    });
+}
+
 function recordvoice(i, o, u, z, w) {
     if (ALLOW_CREATE == 1) {
         lineid = i;
@@ -153,6 +203,75 @@ function recordvoice(i, o, u, z, w) {
         cartid = u;
         logname = z;
         username = w;
+        var totalrws;
+        if (i > 0) {
+            var befsong = i - 1;
+            $.ajax({
+                type: "POST",
+                url: HOST_URL + '/forms/voicetrack/rowinfo.php',
+                data: {
+                    lineid: befsong,
+                    logname: logname
+                },
+                dataType: 'json',
+
+                success: function (data) {
+
+                    if (data['TYPE'] == 1) {
+                        $("#before_song").html(data['COMMENT']);
+                    } else {
+
+                        $("#before_song").html(data['ARTIST'] + " - " + data['TITLE']);
+                    }
+
+                }
+            });
+
+        } else {
+            $("#before_song").html(TRAN_SNGAFVOICETRKNTHBEF);
+        }
+        $.ajax({
+            type: "POST",
+            url: HOST_URL + '/forms/voicetrack/logrowscount.php',
+            data: {
+                logname: logname
+            },
+            dataType: 'json',
+
+            success: function (data) {
+                totalrws = data['totrows'];
+                if (i < data['totrows'] - 1) {
+
+                    var aftsong = i + 1;
+                    $.ajax({
+                        type: "POST",
+                        url: HOST_URL + '/forms/voicetrack/rowinfo.php',
+                        data: {
+                            lineid: aftsong,
+                            logname: logname
+                        },
+                        dataType: 'json',
+
+                        success: function (data1) {
+
+                            if (data['TYPE'] == 1) {
+                                $("#after_song").html(data['COMMENT']);
+                            } else {
+
+                                $("#after_song").html(data1['ARTIST'] + " - " + data1['TITLE']);
+                            }
+
+                        }
+                    });
+
+
+                } else {
+                    $("#after_song").html(TRAN_SNGAFVOICETRKNTHAFT);
+                }
+            }
+        });
+
+
         createWaveSurfer()
         $("#record_voice").modal("show");
     } else {
@@ -238,7 +357,7 @@ var myDropzone = new Dropzone("#dropzone_upload", {
                         $("#title_" + lineid).html(data['TITLE']);
                         $("#length_" + lineid).html(getTimeFromMillis(data['AVERAGE_LENGTH']));
                         if (ALLOW_MULTITRACK == '1') {
-                        $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
+                            $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
                         aria-label="`+ TRAN_VOICETRACKER + `">
                         <button type="button"
                             onclick="recordvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
@@ -259,8 +378,8 @@ var myDropzone = new Dropzone("#dropzone_upload", {
                                 class="btn btn-success"><i
                                     class="bi bi-music-note-list"></i></button>
                     </div>`);
-                } else {
-                    $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
+                        } else {
+                            $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
                         aria-label="`+ TRAN_VOICETRACKER + `">
                         <button type="button"
                             onclick="recordvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
@@ -275,7 +394,8 @@ var myDropzone = new Dropzone("#dropzone_upload", {
                             class="btn btn-warning"><i
                                 class="bi bi-cloud-upload"></i></button>
                     </div>`);
-                }
+                        }
+                        updateRowTime(logname);
                         $("#upload_voice").modal("hide");
                     }
                 });
@@ -414,7 +534,7 @@ function convertAudioBufferToBlob(audioBuffer) {
 function convertBlobToAudioBuffer(myBlob, rdline, rdgroup, idnomb) {
     const audioContext = new AudioContext();
     const fileReader = new FileReader();
-    $("#"+idnomb).prop("disabled",true);
+    $("#" + idnomb).prop("disabled", true);
 
     fileReader.onloadend = () => {
 
@@ -450,7 +570,7 @@ function importToCart(thefile, rdline, rdgroup, idnomb) {
         async: false,
         success: function () {
             $("#record_voice").modal("hide");
-            $("#"+idnomb).prop("disabled",false);
+            $("#" + idnomb).prop("disabled", false);
             $("#recordings").empty();
             $.ajax({
                 type: "POST",
@@ -466,7 +586,7 @@ function importToCart(thefile, rdline, rdgroup, idnomb) {
                     $("#title_" + lineid).html(data['TITLE']);
                     $("#length_" + lineid).html(getTimeFromMillis(data['AVERAGE_LENGTH']));
                     if (ALLOW_MULTITRACK == '1') {
-                    $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
+                        $("#buttons_" + lineid).html(`<div class="btn-group mb-3" role="group"
                         aria-label="`+ TRAN_VOICETRACKER + `">
                         <button type="button"
                             onclick="recordvoice(`+ lineid + `,'` + VT_GROUP + `','` + data['CART_NUMBER'] + `', '` + logname + `', '` + VT_USERNAME + `')"
@@ -502,8 +622,9 @@ function importToCart(thefile, rdline, rdgroup, idnomb) {
                             title="`+ TRAN_UPLOAD + `"
                             class="btn btn-warning"><i
                                 class="bi bi-cloud-upload"></i></button>
-                    </div>`); 
+                    </div>`);
                     }
+                    updateRowTime(logname);
                 }
             });
 

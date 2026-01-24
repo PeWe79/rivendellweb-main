@@ -57,11 +57,39 @@ class DBFunc
         return $array;
 
     }
+    
+
+    public function getLogLineDataAmount($logname)
+    {
+
+        $stmt = $this->_db->prepare('SELECT * FROM LOG_LINES ll LEFT JOIN CART cc ON ll.CART_NUMBER = cc.NUMBER WHERE ll.LOG_NAME = :logname');
+        $stmt->execute([
+            ':logname' => $logname
+        ]);
+        //$array = $stmt->fetch(PDO::FETCH_ASSOC);
+        $number_of_rows = $stmt->rowCount();
+
+        return $number_of_rows;
+
+    }
+
+    public function getLogLinesData($logname)
+    {
+
+        $stmt = $this->_db->prepare('SELECT ll.*, cc.NUMBER, cc.TYPE AS CATYPE, cc.GROUP_NAME, cc.TITLE, cc.ARTIST, cc.AVERAGE_LENGTH FROM LOG_LINES ll LEFT JOIN CART cc ON ll.CART_NUMBER = cc.NUMBER WHERE ll.LOG_NAME = :logname');
+        $stmt->execute([
+            ':logname' => $logname,
+        ]);
+        $array = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $array;
+
+    }
 
     public function getLogLineData($lineid, $logname)
     {
 
-        $stmt = $this->_db->prepare('SELECT * FROM LOG_LINES ll LEFT JOIN CART cc ON ll.CART_NUMBER = cc.NUMBER WHERE ll.LOG_NAME = :logname AND ll.LINE_ID = :lineid');
+        $stmt = $this->_db->prepare('SELECT ll.*, cc.NUMBER, cc.TYPE AS CATYPE, cc.GROUP_NAME, cc.TITLE, cc.ARTIST, cc.AVERAGE_LENGTH FROM LOG_LINES ll LEFT JOIN CART cc ON ll.CART_NUMBER = cc.NUMBER WHERE ll.LOG_NAME = :logname AND ll.LINE_ID = :lineid');
         $stmt->execute([
             ':logname' => $logname,
             ':lineid' => $lineid
