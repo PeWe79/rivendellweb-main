@@ -55,7 +55,7 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/reset.json')) {
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/logedit.json')) {
   $logedit_data = array();
   $jsonData = json_encode($logedit_data, JSON_PRETTY_PRINT);
-  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/logedit.json', $jsonData); 
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/logedit.json', $jsonData);
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/logedit.json';
   $json_string = file_get_contents($filepath);
@@ -67,7 +67,7 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/logedit.json')) {
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/grids.json')) {
   $grids_data = array();
   $jsonData = json_encode($grids_data, JSON_PRETTY_PRINT);
-  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/grids.json', $jsonData);  
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/grids.json', $jsonData);
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/grids.json';
   $json_string = file_get_contents($filepath);
@@ -79,7 +79,7 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/grids.json')) {
 if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json')) {
   $copy_data = array();
   $jsonData = json_encode($copy_data, JSON_PRETTY_PRINT);
-  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData); 
+  file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData);
 } else {
   $filepath = $_SERVER['DOCUMENT_ROOT'] . '/data/copy.json';
   $json_string = file_get_contents($filepath);
@@ -268,13 +268,15 @@ if (!file_exists(LOCAL_PATH_ROOT . "/data/backups/")) {
 /***********************************
  * REMOVE COPY OLDER THAN ONE HOUR *
  ***********************************/
-foreach ($copy_data['CUTS'] as $lines) {
-  $isolder = $functions->isOlderThanOneHour($lines['ADDED']);
-  if ($isolder) {
-    unset($copy_data['CUTS'][$lines['CUTNAME']]);
-    $jsonData = json_encode($copy_data, JSON_PRETTY_PRINT);
-    if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData)) {
-      $errorcopy = 1;
+if (isset($copy_data['CUTS'])) {
+  foreach ($copy_data['CUTS'] as $lines) {
+    $isolder = $functions->isOlderThanOneHour($lines['ADDED']);
+    if ($isolder) {
+      unset($copy_data['CUTS'][$lines['CUTNAME']]);
+      $jsonData = json_encode($copy_data, JSON_PRETTY_PRINT);
+      if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/copy.json', $jsonData)) {
+        $errorcopy = 1;
+      }
     }
   }
 }
