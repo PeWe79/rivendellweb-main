@@ -166,7 +166,25 @@ function updateClock(clock) {
                 onClick: (event, elements, chart) => {
                     if (elements[0]) {
                         const i = elements[0].index;
-                        clone(chart.data.datasets[0].idno[i], 1);
+                        if (chart.data.datasets[0].idno[i] > 0) {
+                            clone(chart.data.datasets[0].idno[i], 1);
+                        } else {
+                            $('#starttime').val("");
+                            $('#endtime').val("");
+                            $('#millisstart').val("");
+                            $('#millisend').val("");
+                            $('#eventid').val("");
+                            $('#editevent').val("0");
+                            $('#addevent_clock').modal('show');
+                        }
+                    } else {
+                        $('#starttime').val("");
+                        $('#endtime').val("");
+                        $('#millisstart').val("");
+                        $('#millisend').val("");
+                        $('#eventid').val("");
+                        $('#editevent').val("0");
+                        $('#addevent_clock').modal('show');
                     }
                 }
             }
