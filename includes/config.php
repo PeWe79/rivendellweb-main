@@ -136,7 +136,7 @@ define('SMTPUSER', $json_sett['smtpusr']);
 define('SMTPPASS', $json_sett['smtppass']);
 define('SMTPFROM', $json_sett['smtpfrom']);
 define('DEFAULTLANG', $json_sett['deflang']);
-define('VERS', '0.6.5'); //DO NOT CHANGE THIS!
+define('VERS', '0.6.7'); //DO NOT CHANGE THIS!
 define('DBOK', '376'); //DO NOT CHANGE THIS!
 define('SYSTIT', 'Rivendell Web Broadcast'); //DO NOT CHANGE THIS!
 define('APIURL', 'http://localhost/rd-bin/rdxport.cgi'); //DO NOT CHANGE THIS!
