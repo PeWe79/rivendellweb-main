@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^login$ login.php
+RewriteRule ^panel$ panel.php

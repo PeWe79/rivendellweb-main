@@ -190,6 +190,7 @@ include LOCAL_PATH_ROOT . '/classes/getinfo.php';
 include LOCAL_PATH_ROOT . '/classes/user.php';
 include LOCAL_PATH_ROOT . '/classes/logmanager.php';
 include LOCAL_PATH_ROOT . '/classes/loggenerator.php';
+include LOCAL_PATH_ROOT . '/classes/touch.php';
 include LOCAL_PATH_ROOT . '/classes/multilang.php';
 $dbfunc = new DBFunc($db);
 $functions = new Functions($db);
@@ -197,6 +198,7 @@ $info = new Getinfo($db);
 $user = new User($db);
 $logfunc = new Log($db);
 $loggen = new LogGenerator($db);
+$touch = new Touch($db);
 /**********************************************************************************
  * WE NEED TO CHECK SO THERE ARE NO LOGS THAT ARE LEFT IN THE LOG EDIT JSON FILE. *
  *             IF THERE ARE LOGS THAT NOT ARE IN USE, THEN REMOVE IT.             *
