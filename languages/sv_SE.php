@@ -1114,3 +1114,6 @@ $sv_SE['SNGBEFVOICETRK'] = 'Låt före voicetrack';
 $sv_SE['SNGAFVOICETRK'] = 'Låt efter voicetrack';
 $sv_SE['SNGAFVOICETRKNTHBEF'] = 'Inget före';
 $sv_SE['SNGAFVOICETRKNTHAFT'] = 'Inget efter';
+$sv_SE['SNDPANEL'] = 'Ljud Panel';
+$sv_SE['SNDPANELNOTSET'] = 'Ej Tilldelad';
+$sv_SE['SNDLOGINRIVENDELLHOST'] = 'Du måste logga in i rivendell på denna värd för att köra detta.';

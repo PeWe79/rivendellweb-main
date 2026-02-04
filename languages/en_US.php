@@ -1114,3 +1114,6 @@ $en_US['SNGBEFVOICETRK'] = 'Song before voicetrack';
 $en_US['SNGAFVOICETRK'] = 'Song after voicetrack';
 $en_US['SNGAFVOICETRKNTHBEF'] = 'Nothing before';
 $en_US['SNGAFVOICETRKNTHAFT'] = 'Nothing after';
+$en_US['SNDPANEL'] = 'Sound Panel';
+$en_US['SNDPANELNOTSET'] = 'Not Set';
+$en_US['SNDLOGINRIVENDELLHOST'] = 'You need to login to rivendell on this host to run this.';
