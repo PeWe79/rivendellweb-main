@@ -1117,3 +1117,4 @@ $en_US['SNGAFVOICETRKNTHAFT'] = 'Nothing after';
 $en_US['SNDPANEL'] = 'Sound Panel';
 $en_US['SNDPANELNOTSET'] = 'Not Set';
 $en_US['SNDLOGINRIVENDELLHOST'] = 'You need to login to rivendell on this host to run this.';
+$en_US['SNDDESCINFOQR'] = 'Scan the qrcode with your tablet to get access to RDAirPlay soundpanels as an app on your tablet. Save it on your homescreen to install it as an app. Then when you are logged in to rivendell you can control the soundpanel from your tablet.';

@@ -41,6 +41,8 @@ $page_vars = 'dash';
 $page_title = $ml->tr('DASHBOARD');
 $page_css = '<link rel="stylesheet" href="'.DIR.'/assets/compiled/css/iconly.css">
 <link rel="stylesheet" href="'.DIR.'/assets/extensions/@fortawesome/fontawesome-free/css/all.min.css">';
+$plugin_js = '<script src="' . DIR . '/assets/extensions/easyqr/easy.qrcode.min.js"></script>';
+$page_js = '<script src="' . DIR . '/assets/static/js/dash.js?3434"></script>';
 ?>
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/top.php'; ?>
 
@@ -182,7 +184,20 @@ $page_css = '<link rel="stylesheet" href="'.DIR.'/assets/compiled/css/iconly.css
                                     </div>
                                 </div>
                             </div>
-                        </div>   <?php } ?>                     
+                        </div>   <?php } ?> 
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4><?= $ml->tr('SNDPANEL'); ?></h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <P><?= $ml->tr('SNDDESCINFOQR'); ?></P>
+                                        <div id="qrcode"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                    
                     </div>                    
                 </section>
             </div>

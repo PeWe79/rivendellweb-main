@@ -1117,3 +1117,4 @@ $sv_SE['SNGAFVOICETRKNTHAFT'] = 'Inget efter';
 $sv_SE['SNDPANEL'] = 'Ljud Panel';
 $sv_SE['SNDPANELNOTSET'] = 'Ej Tilldelad';
 $sv_SE['SNDLOGINRIVENDELLHOST'] = 'Du måste logga in i rivendell på denna värd för att köra detta.';
+$sv_SE['SNDDESCINFOQR'] = 'Skanna QR koden med surfplattan för att få tillgång till RDAirPlay ljudpaneler som en app på surfplattan. Spara den på din hemskärm för att installera den som en app. När du sedan är inloggad på rivendell kan du styra ljudpanelen från din surfplatta.';

@@ -28,7 +28,7 @@
  *********************************************************************************************************/
 require $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 if (!$user->is_logged_in()) {
-    header('Location: '.DIR.'/touch/login');
+    header('Location: ' . DIR . '/touch/login');
     exit();
 }
 $username = $_COOKIE['username'];
@@ -77,14 +77,19 @@ if (isset($_COOKIE['t_panel'])) {
     <meta name="theme-color" content="black">
     <link rel="manifest" href="manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:locale" content="<?php if (isset($_COOKIE['lang'])) { echo $_COOKIE['lang']; } else { echo DEFAULTLANG; } ?>" />
-	<meta property="og:type" content="article" />
-	<meta property="og:title" content="<?php echo SYSTIT; ?>" />
-	<meta property="og:url" content="<?php echo DIR; ?>" />
-	<meta property="og:site_name" content="<?php echo SYSTIT; ?>" />
+    <meta property="og:locale"
+        content="<?php if (isset($_COOKIE['lang'])) {
+            echo $_COOKIE['lang'];
+        } else {
+            echo DEFAULTLANG;
+        } ?>" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="<?php echo SYSTIT; ?>" />
+    <meta property="og:url" content="<?php echo DIR; ?>" />
+    <meta property="og:site_name" content="<?php echo SYSTIT; ?>" />
     <meta name="apple-mobile-web-app-title" content="RivWebPanel" />
-	<link rel="canonical" href="<?php echo DIR; ?>" />
-	<link rel="shortcut icon" href="<?php echo DIR; ?>/touch/assets/favicon.ico" />
+    <link rel="canonical" href="<?php echo DIR; ?>" />
+    <link rel="shortcut icon" href="<?php echo DIR; ?>/touch/assets/favicon.ico" />
     <link rel="stylesheet" href="<?php echo DIR ?>/assets/compiled/css/app.css">
     <link rel="stylesheet" href="<?php echo DIR ?>/assets/compiled/css/app-dark.css">
     <link rel="stylesheet" href="<?php echo DIR ?>/assets/extensions/choices.js/public/assets/styles/choices.css">
@@ -102,141 +107,152 @@ if (isset($_COOKIE['t_panel'])) {
         </div>
     </nav>
     <div class="container">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between">
-                <h4 class="card-title"><?= $ml->tr('SNDPANEL'); ?></h4>
-                <div data-kt-library-table-toolbar="base">
-                    <?php if ($touch->isloggedInPC($username) > 1) { ?>
-                        <select id="selStation" class="form-select">
-                            <?php $sql2 = 'SELECT * FROM `STATIONS` WHERE `USER_NAME` = :owner';
+        <?php if ($isloggedin == 0) { ?>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h4 class="card-title"><?= $ml->tr('SNDPANEL'); ?></h4>
 
-                            $stmt2 = $db->prepare($sql2);
-                            $stmt2->bindParam(':owner', $username);
-                            $stmt2->setFetchMode(PDO::FETCH_ASSOC);
-                            $stmt2->execute();
-                            $result = $stmt2->fetchAll();
+                </div>
+                <div class="card-body">
+                    <P><?= $ml->tr('SNDLOGINRIVENDELLHOST'); ?></P>
+                </div>
+            </div>
+        <?php } else { ?>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h4 class="card-title"><?= $ml->tr('SNDPANEL'); ?></h4>
+                    <div data-kt-library-table-toolbar="base">
+                        <?php if ($touch->isloggedInPC($username) > 1) { ?>
+                            <select id="selStation" class="form-select">
+                                <?php $sql2 = 'SELECT * FROM `STATIONS` WHERE `USER_NAME` = :owner';
+
+                                $stmt2 = $db->prepare($sql2);
+                                $stmt2->bindParam(':owner', $username);
+                                $stmt2->setFetchMode(PDO::FETCH_ASSOC);
+                                $stmt2->execute();
+                                $result = $stmt2->fetchAll();
+                                foreach ($result as $row1) { ?>
+                                    <option value="<?php echo $row1['NAME']; ?>">
+                                        <?php echo $row1['DESCRIPTION']; ?>
+                                    </option>
+                                <?php } ?>
+
+                            </select>
+                        <?php } ?>
+                        <select id="selPanels" onchange="changePanel(this);" class="form-select">
+                            <?php $sql = 'SELECT DISTINCT PANEL_NO FROM `PANELS` WHERE `OWNER` = :owner ORDER BY PANEL_NO ASC';
+
+                            $stmt = $db->prepare($sql);
+                            $stmt->bindParam(':owner', $username);
+                            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+                            $stmt->execute();
+
+                            $result = $stmt->fetchAll();
                             foreach ($result as $row1) { ?>
-                                <option value="<?php echo $row1['NAME']; ?>">
-                                    <?php echo $row1['DESCRIPTION']; ?>
+                                <option value="<?php echo "U" . $row1['PANEL_NO']; ?>" <?php if ($_COOKIE['t_panel'] == "U" . $row1['PANEL_NO']) {
+                                         echo "SELECTED";
+                                     } ?>>
+                                    <?php echo "U:" . $row1['PANEL_NO'] + 1; ?>
+                                </option>
+                            <?php } ?>
+                            <?php $sql = 'SELECT DISTINCT PANEL_NO FROM `PANELS` WHERE `OWNER` = :owner ORDER BY PANEL_NO ASC';
+
+                            $stmt = $db->prepare($sql);
+                            $stmt->bindParam(':owner', $pclog);
+                            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+                            $stmt->execute();
+
+                            $result = $stmt->fetchAll();
+                            foreach ($result as $row1) { ?>
+                                <option value="<?php echo "S" . $row1['PANEL_NO']; ?>" <?php if ($_COOKIE['t_panel'] == "S" . $row1['PANEL_NO']) {
+                                         echo "SELECTED";
+                                     } ?>>
+                                    <?php echo "S:" . $row1['PANEL_NO'] + 1; ?>
                                 </option>
                             <?php } ?>
 
                         </select>
-                    <?php } ?>
-                    <select id="selPanels" onchange="changePanel(this);" class="form-select">
-                        <?php $sql = 'SELECT DISTINCT PANEL_NO FROM `PANELS` WHERE `OWNER` = :owner ORDER BY PANEL_NO ASC';
-
-                        $stmt = $db->prepare($sql);
-                        $stmt->bindParam(':owner', $username);
-                        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                        $stmt->execute();
-
-                        $result = $stmt->fetchAll();
-                        foreach ($result as $row1) { ?>
-                            <option value="<?php echo "U" . $row1['PANEL_NO']; ?>" <?php if ($_COOKIE['t_panel'] == "U" . $row1['PANEL_NO']) {
-                                   echo "SELECTED";
-                               } ?>>
-                                <?php echo "U:" . $row1['PANEL_NO'] + 1; ?>
-                            </option>
-                        <?php } ?>
-                        <?php $sql = 'SELECT DISTINCT PANEL_NO FROM `PANELS` WHERE `OWNER` = :owner ORDER BY PANEL_NO ASC';
-
-                        $stmt = $db->prepare($sql);
-                        $stmt->bindParam(':owner', $pclog);
-                        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                        $stmt->execute();
-
-                        $result = $stmt->fetchAll();
-                        foreach ($result as $row1) { ?>
-                            <option value="<?php echo "S" . $row1['PANEL_NO']; ?>" <?php if ($_COOKIE['t_panel'] == "S" . $row1['PANEL_NO']) {
-                                   echo "SELECTED";
-                               } ?>>
-                                <?php echo "S:" . $row1['PANEL_NO'] + 1; ?>
-                            </option>
-                        <?php } ?>
-
-                    </select>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table mb-0">
-                        <thead>
-                            <tr>
-                                <?php
-                                if ($paneltype == 0) {
-                                    $owner = $pclog;
-                                } else {
-                                    $owner = $username;
-                                }
-                                $pancolcont = 0;
-                                $totpanels = $touch->countPanels($owner, $panelno);
-                                $maxpanelcol = $touch->maxColums($owner, $panelno);
-                                $maxrowspan = $touch->maxRows($owner, $panelno);
-                                $pancol = $touch->getPanelsButton($owner, $panelno);
-                                foreach ($pancol as $colrow) { ?>
-
-                                    <?php if ($pancolcont <= $maxpanelcol) { ?>
-                                        <th>
-
-                                        </th>
-                                    <?php }
-                                    $pancolcont++;
-                                } ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $thepanels = $touch->getPanelsButtonRowUnique($owner, $panelno);
-                            $panelcontplace = 1;
-                            $panelcontplace1 = 1;
-                            $panelcontrow = 1;
-                            $lastrowcont = 0;
-                            $runsNo = -1;
-                            $sql = 'SELECT DISTINCT ROW_NO FROM `PANELS` WHERE `OWNER` = :owner AND `PANEL_NO` = :panel  ORDER BY ROW_NO ASC';
-                            
-                            $stmt = $db->prepare($sql);
-                            $stmt->bindParam(':owner', $owner);
-                            $stmt->bindParam(':panel', $panelno);
-                            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                            $stmt->execute();
-
-                            while ($row = $stmt->fetch()) {
-                                $thisrowpanels = $touch->getPanelsButtonRow($owner, $panelno, $row['ROW_NO']);
-                                $totalthisrow = $touch->countPanelsRow($owner, $panelno, $row['ROW_NO']);
-                                echo "<tr>";
-                                $sql2 = 'SELECT * FROM `PANELS` WHERE `OWNER` = :owner AND `PANEL_NO` = :panel AND `ROW_NO` = :rowsp  ORDER BY COLUMN_NO ASC';
-
-                                $stmt2 = $db->prepare($sql2);
-                                $stmt2->bindParam(':owner', $owner);
-                                $stmt2->bindParam(':panel', $panelno);
-                                $stmt2->bindParam(':rowsp', $row['ROW_NO']);
-                                $stmt2->setFetchMode(PDO::FETCH_ASSOC);
-                                $stmt2->execute();
-                                $result = $stmt2->fetchAll();
-                                foreach ($result as $row1) { 
-                                    if ($row1['TYPE'] == 0) {
-                                        $panletter = "S".$row1['PANEL_NO'];
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <?php
+                                    if ($paneltype == 0) {
+                                        $owner = $pclog;
                                     } else {
-                                        $panletter = "U".$row1['PANEL_NO'];
+                                        $owner = $username;
                                     }
-                                    ?>
-                                    <td><a href="javascript:;" style="background: <?php echo $row1['DEFAULT_COLOR']; ?>;"
-                                            id="panelbutt_<?php echo $row1['ID']; ?>" class="btn btn-lg btn-light"
-                                            onclick="runPanel('<?php echo $panletter; ?>', '<?php echo $pclog; ?>', <?php echo $row1['ROW_NO']; ?>, <?php echo $row1['COLUMN_NO']; ?>)"><span class="fs-6 font-bold">
-                                                <?php echo $row1['LABEL']; ?>
-                                            </span></a>
+                                    $pancolcont = 0;
+                                    $totpanels = $touch->countPanels($owner, $panelno);
+                                    $maxpanelcol = $touch->maxColums($owner, $panelno);
+                                    $maxrowspan = $touch->maxRows($owner, $panelno);
+                                    $pancol = $touch->getPanelsButton($owner, $panelno);
+                                    foreach ($pancol as $colrow) { ?>
 
-                                    </td>
-                                <?php } 
-                                echo "</tr>";
+                                        <?php if ($pancolcont <= $maxpanelcol) { ?>
+                                            <th>
 
-                            } ?>
-                        </tbody>
-                    </table>
+                                            </th>
+                                        <?php }
+                                        $pancolcont++;
+                                    } ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $thepanels = $touch->getPanelsButtonRowUnique($owner, $panelno);
+                                $panelcontplace = 1;
+                                $panelcontplace1 = 1;
+                                $panelcontrow = 1;
+                                $lastrowcont = 0;
+                                $runsNo = -1;
+                                $sql = 'SELECT DISTINCT ROW_NO FROM `PANELS` WHERE `OWNER` = :owner AND `PANEL_NO` = :panel  ORDER BY ROW_NO ASC';
+                                $stmt = $db->prepare($sql);
+                                $stmt->bindParam(':owner', $owner);
+                                $stmt->bindParam(':panel', $panelno);
+                                $stmt->setFetchMode(PDO::FETCH_ASSOC);
+                                $stmt->execute();
+
+                                while ($row = $stmt->fetch()) {
+                                    $thisrowpanels = $touch->getPanelsButtonRow($owner, $panelno, $row['ROW_NO']);
+                                    $totalthisrow = $touch->countPanelsRow($owner, $panelno, $row['ROW_NO']);
+                                    echo "<tr>";
+                                    $sql2 = 'SELECT * FROM `PANELS` WHERE `OWNER` = :owner AND `PANEL_NO` = :panel AND `ROW_NO` = :rowsp  ORDER BY COLUMN_NO ASC';
+
+                                    $stmt2 = $db->prepare($sql2);
+                                    $stmt2->bindParam(':owner', $owner);
+                                    $stmt2->bindParam(':panel', $panelno);
+                                    $stmt2->bindParam(':rowsp', $row['ROW_NO']);
+                                    $stmt2->setFetchMode(PDO::FETCH_ASSOC);
+                                    $stmt2->execute();
+                                    $result = $stmt2->fetchAll();
+                                    foreach ($result as $row1) {
+                                        if ($row1['TYPE'] == 0) {
+                                            $panletter = "S" . $row1['PANEL_NO'];
+                                        } else {
+                                            $panletter = "U" . $row1['PANEL_NO'];
+                                        }
+                                        ?>
+                                        <td><a href="javascript:;" style="background: <?php echo $row1['DEFAULT_COLOR']; ?>;"
+                                                id="panelbutt_<?php echo $row1['ID']; ?>" class="btn btn-lg btn-light"
+                                                onclick="runPanel('<?php echo $panletter; ?>', '<?php echo $pclog; ?>', <?php echo $row1['ROW_NO']; ?>, <?php echo $row1['COLUMN_NO']; ?>)"><span
+                                                    class="fs-6 font-bold">
+                                                    <?php echo $row1['LABEL']; ?>
+                                                </span></a>
+
+                                        </td>
+                                    <?php }
+                                    echo "</tr>";
+
+                                } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </div><?php } ?>
 
     </div>
     <script src="<?php echo DIR ?>/assets/extensions/jquery/jquery.min.js"></script>
