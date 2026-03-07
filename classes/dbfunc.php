@@ -57,7 +57,7 @@ class DBFunc
         return $array;
 
     }
-    
+
 
     public function getLogLineDataAmount($logname)
     {
@@ -785,16 +785,13 @@ class DBFunc
 
     }
 
-
-
-    public function getRivendellLog($logname, $hour)
+    public function checkChedTimes($logname, $hour)
     {
-
-        $logSet = array();
-        $sql = "";
 
         $lowerMS = 0;
         $upperMS = 86400000;
+
+        $starttimed = 0;
 
         if ($hour) {
             $lowerMS = $hour * 3600 * 1000;
@@ -810,7 +807,70 @@ class DBFunc
                 LEFT JOIN CART ON log.CART_NUMBER=CART.NUMBER
                 LEFT JOIN GROUPS gr ON CART.GROUP_NAME=gr.NAME
                 WHERE log.LOG_NAME='$logname' AND
+                START_TIME='$starttimed' ORDER BY COUNT ASC";
+
+        $stmt = $this->_db->prepare($sql);
+        $stmt->execute();
+        $array = $stmt->fetch(PDO::FETCH_ASSOC);
+        $number_of_rows = $stmt->rowCount();
+
+        if ($number_of_rows > 1) {
+            return false;
+        } else {
+            return true;
+        }
+
+
+    }
+
+
+
+    public function getRivendellLog($logname, $hour)
+    {
+        $starttimed = 0;
+        $notsched = 0;
+        if (!$this->checkChedTimes($logname, $hour)) {
+            $notsched = 1;
+        }
+        
+        $logSet = array();
+        $sql = "";
+        $faketime = 0;
+        $currtimenow = 0;
+
+        $lowerMS = 0;
+        $upperMS = 86400000;
+
+        if ($hour) {
+            $lowerMS = $hour * 3600 * 1000;
+            $upperMS = $lowerMS + ((3600 * 1000) - 1);
+        }
+        //$currtimenow = $lowerMS;
+
+        if ($notsched == 0) {
+            $sql = "SELECT COUNT, CART.ARTIST, CART.TITLE, CART.GROUP_NAME, CART.AVERAGE_LENGTH, 
+                ID, SOURCE, log.TYPE, START_TIME, LINE_ID,
+                CART_NUMBER, COMMENT, log.LABEL, EVENT_LENGTH, LINK_EVENT_NAME, 
+                LINK_START_TIME, LINK_LENGTH, EXT_START_TIME, EXT_CART_NAME, gr.COLOR
+                FROM LOG_LINES log
+                LEFT JOIN CART ON log.CART_NUMBER=CART.NUMBER
+                LEFT JOIN GROUPS gr ON CART.GROUP_NAME=gr.NAME
+                WHERE log.LOG_NAME='$logname' AND
                 START_TIME BETWEEN $lowerMS AND $upperMS ORDER BY COUNT ASC";
+        } else {
+            $sql = "SELECT COUNT, CART.ARTIST, CART.TITLE, CART.GROUP_NAME, CART.AVERAGE_LENGTH, 
+                ID, SOURCE, log.TYPE, START_TIME, LINE_ID,
+                CART_NUMBER, COMMENT, log.LABEL, EVENT_LENGTH, LINK_EVENT_NAME, 
+                LINK_START_TIME, LINK_LENGTH, EXT_START_TIME, EXT_CART_NAME, gr.COLOR
+                FROM LOG_LINES log
+                LEFT JOIN CART ON log.CART_NUMBER=CART.NUMBER
+                LEFT JOIN GROUPS gr ON CART.GROUP_NAME=gr.NAME
+                WHERE log.LOG_NAME='$logname' AND
+                START_TIME='$starttimed' ORDER BY COUNT ASC";
+        }
+
+
+        
 
 
         $stmt = $this->_db->prepare($sql);
@@ -819,20 +879,43 @@ class DBFunc
 
 
         while ($row = $stmt->fetch()) {
-            $logSet[] = array(
-                'count' => $row['COUNT'],
-                'line_id' => $row['LINE_ID'],
-                'cart' => $row['CART_NUMBER'],
-                'artist' => $row['ARTIST'],
-                'title' => $row['TITLE'],
-                'group' => $row['GROUP_NAME'],
-                'length' => $row['AVERAGE_LENGTH'],
-                'type' => $row['TYPE'],
-                'comment' => $row['COMMENT'],
-                'start_time' => $row['START_TIME'],
-                'label' => $row['LABEL'],
-                'color' => $row['COLOR'],
-            );
+            $currtimenow = $currtimenow + $row['AVERAGE_LENGTH'];
+            $faketime = $currtimenow - $row['AVERAGE_LENGTH'];
+            if ($row['START_TIME'] != 0) {
+                $logSet[] = array(
+                    'count' => $row['COUNT'],
+                    'line_id' => $row['LINE_ID'],
+                    'cart' => $row['CART_NUMBER'],
+                    'artist' => $row['ARTIST'],
+                    'title' => $row['TITLE'],
+                    'group' => $row['GROUP_NAME'],
+                    'length' => $row['AVERAGE_LENGTH'],
+                    'type' => $row['TYPE'],
+                    'comment' => $row['COMMENT'],
+                    'start_time' => $row['START_TIME'],
+                    'label' => $row['LABEL'],
+                    'color' => $row['COLOR'],
+                );
+
+            } else {
+                if ($faketime >= $lowerMS && $faketime <= $upperMS) {
+                    $logSet[] = array(
+                        'count' => $row['COUNT'],
+                        'line_id' => $row['LINE_ID'],
+                        'cart' => $row['CART_NUMBER'],
+                        'artist' => $row['ARTIST'],
+                        'title' => $row['TITLE'],
+                        'group' => $row['GROUP_NAME'],
+                        'length' => $row['AVERAGE_LENGTH'],
+                        'type' => $row['TYPE'],
+                        'comment' => $row['COMMENT'],
+                        'start_time' => $row['START_TIME'],
+                        'label' => $row['LABEL'],
+                        'color' => $row['COLOR'],
+                    );
+                }
+            }
+
         }
 
 
@@ -3275,8 +3358,10 @@ class DBFunc
     {
 
         $stmt = $this->_db->prepare('SELECT * FROM DECKS WHERE STATION_NAME = :station AND CHANNEL = :channel');
-        $stmt->execute([':station' => $station,
-        ':channel' => $channel]);
+        $stmt->execute([
+            ':station' => $station,
+            ':channel' => $channel
+        ]);
         $array = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $array;
@@ -3537,7 +3622,7 @@ class DBFunc
             } else {
                 $sql = "UPDATE LOG_LINES SET FADEDOWN_POINT = :fade, FADEDOWN_GAIN = :gain WHERE LINE_ID = :lineid AND LOG_NAME = :logname";
             }
-            
+
             $stmt = $this->_db->prepare($sql);
             $stmt->execute([
                 ':fade' => $fadevalue,
